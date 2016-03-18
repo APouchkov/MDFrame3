@@ -1,0 +1,63 @@
+package cxMDLookupTreeComboBox22;
+
+{$R *.res}
+{$R *.otares}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$DEFINE PACKAGE}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION '-=MD=- TcxLookupDBTreeComboBox & TcxDBLookupDBTreeComboBox Edit'}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  designide,
+  vcl,
+  vclactnband,
+  vclx,
+  xmlrtl,
+  vclimg,
+  vcldb,
+  dbrtl,
+  NamedVariablesD22,
+  cxDataRS22,
+  cxLibraryRS22,
+  dxGDIPlusRS22,
+  dxCoreRS22,
+  dxThemeRS22,
+  dxComnRS22,
+  cxEditorsRS22,
+  dxBarRS22,
+  cxPageControlRS22,
+  cxBarEditItemRS22,
+  cxTreeListRS22,
+  FieldDataLinkD22,
+  cxMultiFieldsDBDataBinding22,
+  cxMDDBTreeList22;
+
+contains
+  cxMDLookupTreeComboBox in '..\cxMDLookupTreeComboBox.pas',
+  cxMDLookupTreeComboBoxReg in '..\cxMDLookupTreeComboBoxReg.pas';
+
+end.

@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{05AAFD86-86B1-4642-B1CE-86ECC245C9C6}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="dhandler23.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="dcldhandler23.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="dhandler23">
+        <MSBuild Projects="dhandler23.dproj"/>
+    </Target>
+    <Target Name="dhandler23:Clean">
+        <MSBuild Projects="dhandler23.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dhandler23:Make">
+        <MSBuild Projects="dhandler23.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dcldhandler23">
+        <MSBuild Projects="dcldhandler23.dproj"/>
+    </Target>
+    <Target Name="dcldhandler23:Clean">
+        <MSBuild Projects="dcldhandler23.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dcldhandler23:Make">
+        <MSBuild Projects="dcldhandler23.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="dhandler23;dcldhandler23"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="dhandler23:Clean;dcldhandler23:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="dhandler23:Make;dcldhandler23:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

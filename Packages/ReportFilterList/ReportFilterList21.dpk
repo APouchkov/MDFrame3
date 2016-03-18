@@ -1,0 +1,54 @@
+package ReportFilterList21;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$DEFINE PACKAGE}
+{$ENDIF IMPLICITBUILDING}
+{$IMPLICITBUILD ON}
+
+requires
+  vcl,
+  DesignIde,
+  dbrtl,
+  vclimg,
+  inet,
+  vcldb,
+  NamedVariablesD21,
+  dxCoreRS21,
+  cxLibraryRS21,
+  dxGDIPlusRS21,
+  dxThemeRS21,
+  cxDataRS21,
+  cxEditorsRS21,
+  cxPageControlRS21,
+  dxBarRS21,
+  dxComnRS21,
+  cxGridRS21;
+
+contains
+  SBaseReportFilter in '..\..\Common\SBaseReportFilter.pas';
+
+end.
+

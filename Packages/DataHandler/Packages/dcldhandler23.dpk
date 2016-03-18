@@ -1,0 +1,50 @@
+package dcldhandler23;
+
+{$R *.res}
+{$R *.otares}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$DEFINE PACKAGE}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION '-=MD=-(Vaizer) BackOffice Helper component - TDataHandler'}
+{$DESIGNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  dbrtl,
+  DesignIDE,
+  vcl,
+  dcldxItemPropStorage23,
+  NamedVariablesD23,
+  DHandler23,
+  UniversalUtilsD23;
+
+contains
+  DHEditFrm in '..\DHEditFrm.pas' {DHEditForm},
+  dhDesignEditors in '..\dhDesignEditors.pas',
+  dhReg in '..\dhReg.pas',
+  DataHandlerSupport in '..\..\..\Common\DataHandlerSupport.pas';
+
+end.
