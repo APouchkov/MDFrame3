@@ -1,0 +1,37 @@
+  SQLText_DataModule = 'EXEC [Delphi].[CIS:DataModule@DFM] @Language = :Language, @Firms = :Firms, @Menu = :Menu, @Param = :Param'
+
+  inherited SplashForm: TSBaseSplashFrm
+    Width = 620
+    Height = 287
+  end 
+
+  object ConnectDialog: TInternalConnectDialog
+    LabelSet = lsRussian
+    DialogClass = 'TInternalConnectForm'
+    StoreLogInfo = False
+
+    HidePort = True
+  end
+
+  object SQLServerUniProvider: TSQLServerUniProvider
+  end
+
+  object Connection: TInternalConnection
+    ProviderName = 'SQL Server'
+    Options.EnableFMTBCD = True
+
+    SpecificOptions.Strings = (
+      'SQL Server.LockTimeout=-1'
+      'SQL Server.OLEDBProvider=prNativeClient')
+
+    ConnectDialog = ConnectDialog
+  end
+
+  inherited Self: TMainDataModule
+    SQLConnectionProvider.Connection = Connection
+  end
+
+  inherited SBaseFormProperties: TSBaseFormProperties
+    FontName    = 'MS Sans Serif'
+    SkinFile    = 'Skins.skinres'
+  end

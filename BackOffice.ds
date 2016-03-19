@@ -1,0 +1,105 @@
+procedure SQLConnectionProviderOnInfoMessage(Sender: TUniConnection; AMessage: String);
+begin
+  Log(lgInfo, AMessage, False);
+end;
+
+procedure ConnectOnErrorMessage(Sender: TUniConnection; E: Exception; var Fail: Boolean);
+begin
+  if Sender.InTransaction then
+    Sender.Rollback;
+  Fail := True
+end;
+
+var
+  I, Idx    : Integer;
+  LConnected: Boolean;
+
+  LItem     : String;
+  LFirms    : String;
+
+  LLanguage: String = 'RU';
+  LMenu    : String;
+  LParam   : String;
+
+procedure PrepareParams(var Language: String; var Firms: String; var Menu: String; var Param: String);
+begin
+  Language := LLanguage;
+  Firms    := LFirms;
+  Menu     := LMenu;
+  Param    := LParam;
+end;
+
+BEGIN
+  Application.Title := 'Мастер Система ГК «Открытие»';
+
+  with Self do begin
+    Connection.OnError := @ConnectOnErrorMessage;
+    SQLConnectionProvider.OnInfoMessage := @SQLConnectionProviderOnInfoMessage;
+    ConnectDialog.Caption := VersionInfo.ProductName + ' / ' + VersionInfo.FileVersion;
+
+    I := 0;
+    while I < ParamCount - 1 do begin
+      LItem := ParamStr(I);
+      if LItem = '/N' then begin
+        Connection.Username := ParamStr(I + 1);
+        ConnectDialog.StoreLogInfo := False;
+        I := I + 1;
+      end else if LItem = '/P' then begin
+        Connection.Password := ParamStr(I + 1);
+        I := I + 1;
+      end else if LItem = '/D' then begin
+        LItem := ParamStr(I + 1);
+        Idx := PosExRevert('\', LItem, -1);
+        if Idx > 0 then begin
+          Connection.Server := Copy(LItem, 1, Idx-1);
+          Connection.DataBase := Copy(LItem, Idx+1, 128);
+        end;
+        ConnectDialog.StoreLogInfo := False;
+        I := I + 1;
+      end else if LItem = '/LANG' then begin
+        LLanguage := ParamStr(I + 1);
+        I := I + 1;
+      end
+
+      else if LItem = '/FIRMS' then begin
+        LFirms := ParamStr(I + 1);
+        I := I + 1;
+      end
+      else if LItem = '/MENU' then begin
+        LMenu := ParamStr(I + 1);
+        I := I + 1;
+      end
+      else if LItem = '/PARAM' then begin
+        LParam := ParamStr(I + 1);
+        I := I + 1;
+      end
+
+      else if LItem = '/TITLE' then begin
+        Application.Title := ParamStr(I + 1);
+        I := I + 1;
+      end;
+      I := I + 1;
+    end;
+
+    if (Connection.Username <> '') and (Connection.Password <> '') and (Connection.Server <> '') and (Connection.DataBase <> '') then begin
+      Connection.LoginPrompt := False;
+      Connection.Connected := True;
+    end;
+
+    LConnected := False;
+    while not LConnected do begin
+      if not Connection.Connected then begin
+        Connection.LoginPrompt := True;
+        Connection.Connected := True;
+      end;
+
+
+      if Connection.Connected then begin
+        Connection.LoginPrompt := False;
+
+        LConnected := True;
+      end;
+    end;
+
+  end;
+END.
