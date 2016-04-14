@@ -260,6 +260,7 @@ type
 {$ENDIF}
 
 //    FMessages: TSBasePeriodicTabControlProperties;
+    FInternalReadOnly: Boolean;
     FReadOnly: Boolean;
 
 {$IFNDEF PACKAGE}
@@ -296,8 +297,10 @@ type
     function GetActiveDate: Variant;
 {$ENDIF}
 
-    //procedure UpdateReadOnly;
+    function InternalCanModify: Boolean;
+    procedure UpdateReadOnly;
     procedure SetReadOnly(const Value: Boolean);
+
     procedure SetOnDataCommit(const Value: TDBPeriodicTabControlNotifyAllowEvent);
     procedure SetPeriodic(const Value: TDBPeriodicTabControlPeriodic);
 //    procedure SetMessages(const Value: TSBasePeriodicTabControlProperties);
@@ -1002,9 +1005,14 @@ begin
 end;
 {$ENDIF}
 
+function TDBPeriodicTabControl.InternalCanModify: Boolean;
+begin
+  Result := Assigned(FPeriodic.DataHandler) and FPeriodic.DataHandler.CanModify;
+end;
+
 function TDBPeriodicTabControl.CanModify: Boolean;
 begin
-  Result := (not FReadOnly) and Assigned(FPeriodic.DataHandler) and FPeriodic.DataHandler.CanModify;
+  Result := (not FInternalReadOnly) and (not FReadOnly) and InternalCanModify;
 end;
 
 procedure TDBPeriodicTabControl.Change;
@@ -1526,7 +1534,7 @@ begin
 //  else
 //    LReadOnly := False;
 
-  LReadOnly := (not CanModify) or FPeriodic.DataHandler.OptionsMenu.KeyFieldsMode;
+  LReadOnly := (not InternalCanModify) or FPeriodic.DataHandler.OptionsMenu.KeyFieldsMode;
 
   //-- Сортируем список
   FDateList.Sort;
@@ -1549,7 +1557,8 @@ begin
   end;
 
   //-- Приводим свое ReadOnly в соответсвие с PeriodicDataHandler
-  ReadOnly := LReadOnly;
+  FInternalReadOnly := LReadOnly;
+  UpdateReadOnly;
 end;
 
 {$IFNDEF PACKAGE}
@@ -1585,22 +1594,29 @@ begin
   FPeriodic.Assign(Value);
 end;
 
-procedure TDBPeriodicTabControl.SetReadOnly(const Value: Boolean);
+procedure TDBPeriodicTabControl.UpdateReadOnly;
+var
+  LCanModify: Boolean;
 begin
-//  if FReadOnly <> Value then begin
-  FReadOnly := Value;
-
+  LCanModify := CanModify;
   if Tabs.Count > 0 then
     with Periodic.DataHandler.OptionsMenu do
-      Tabs[Pred(Tabs.Count)].Visible := (not FReadOnly) or not (OptionsNew.Visible or OptionsCopy.Visible);
+      Tabs[Pred(Tabs.Count)].Visible := LCanModify or not (OptionsNew.Visible or OptionsCopy.Visible);
 
 {$IFNDEF PACKAGE}
-  if FReadOnly then
-    OnMouseDown := nil
+  if LCanModify then
+    OnMouseDown := TabControlOnMouseDown
   else
-    OnMouseDown := TabControlOnMouseDown;
+    OnMouseDown := nil;
 {$ENDIF}
-//  end;
+end;
+
+procedure TDBPeriodicTabControl.SetReadOnly(const Value: Boolean);
+begin
+  if FReadOnly <> Value then begin
+    FReadOnly := Value;
+    UpdateReadOnly;
+  end;
 end;
 
 procedure TDBPeriodicTabControl.SetTabIndex(ATabIndex: Integer);
