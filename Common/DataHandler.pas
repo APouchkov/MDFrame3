@@ -1762,10 +1762,17 @@ begin
     LDsName := LeftStr(AFullFieldName, Pred(LPos));
 
     LDH   := ParentByDataName(LDsName);
+    if not Assigned(LDH) then
+      Raise Exception.Create('DataHanler '#171 + LDsName + #187' not found for requested name '#171 + AFullFieldName + #187);
   end else
     LFlName := AFullFieldName;
 
   LDS := LDH.DataSet;
+//  if Assigned(LDH) then
+//    LDS := LDH.DataSet
+//  else
+//    LDS := nil;
+
   LField := nil;
   LParam := nil;
   if Assigned(LDS) then begin
