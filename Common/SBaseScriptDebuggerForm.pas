@@ -14,7 +14,8 @@ uses
   dxStatusBar, dxMDStatusBar, SynEdit, dxBarBuiltInMenu, cxPC, cxStyles, cxCustomData,
   cxFilter, cxData, cxDataStorage, cxEdit, cxNavigator, Data.DB, cxDBData,
   cxGridLevel, cxGridCustomView, cxGridCustomTableView, cxGridTableView,
-  cxGridDBTableView, cxGrid, MemDS, VirtualTable, cxSplitter, cxMDGrid;
+  cxGridDBTableView, cxGrid, MemDS, VirtualTable, cxSplitter, cxMDGrid,
+  dxSkinsCore, dxSkinsDefaultPainters, dxMDBar;
 
 type
   TSBaseFrmCrack = class(TSBaseFrm);
@@ -151,6 +152,8 @@ var
 begin
   Assert(Assigned(Owner) and (Owner is TSBaseFrm));
   inherited;
+
+  FLine := -1;
   FBreakPoints := TList.Create;
   DebugForm.FScriptDebuggerForm := Self;
 
@@ -218,11 +221,12 @@ begin
 
   if CreateFormParams.Find(SConst_Line, LIdx) then begin
     SetActiveLine(CreateFormParams.Items[LIdx].Value);
+    CreateFormParams.Delete(Lidx);
   end else
     SetActiveLine(-1);
 
   FPaused := (CreateFormParams[SConst_Paused] = True);
-  if FPaused then
+  if FPaused and (FLine >= 0) then
     SetErrorLine(FLine)
   else
     FErrorLine := -1;
@@ -666,7 +670,7 @@ begin
     LIndex := Pos(':', SourcePos);
     if LIndex > 0 then begin
       LLine := StrToIntDef(LeftStr(SourcePos, LIndex - 1), 0);
-      if FBreakPoints.IndexOf(Pointer(LLine)) >= 0 then
+      if (not FPaused) and (FBreakPoints.IndexOf(Pointer(LLine)) >= 0) then
         FPaused := True;
     end else
       LLine := -1;

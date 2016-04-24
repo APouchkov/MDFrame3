@@ -3,9 +3,9 @@ unit SBaseForm;
 
 {******************************************************************************}
 {**  Базовая форма                                                           **}
-{**  (c) None, 2006                                                          **}
-{**  Автор: Соковнин Андрей                                                  **}
-{**  Дата создания: 15.08.2006                                               **}
+{**  (c) -=MD=-, 2006                                                        **}
+{**  Подал идею: Соковнин Андрей                                             **}
+{**  Дата идеи: 15.08.2006                                                   **}
 {******************************************************************************}
 
 interface
@@ -92,6 +92,7 @@ const
   SBFSelectCallBackScript   : String = 'SELECT#CALLBACK#SCRIPT';
 
   SBFTestRunMode            : String = 'TEST#RUN#MODE';
+  SBFScriptDebugMode        : String = 'SCRIPT#DEBUG#MODE';
 
   SBFSM_Single              : String = 'Single:Default';
   SBFSM_SingleRepeatAble    : String = 'Single:RepeatAble';
@@ -702,6 +703,9 @@ ENDIF}
   protected
 {$IFDEF DEBUG}
     FDebugInfo: TStrings;
+{$IFDEF DEBUG_FORMS}
+    FScriptDebugMode: Boolean;
+{$ENDIF}
 {$ENDIF}
     { Внутренняя переменная. Список элементов, по которым должен будет обработаться Click, после того как форма станет видимой. }
     FClickItems: TList<TComponent>;
@@ -2080,9 +2084,25 @@ begin
       FDebugInfo.Add(FormatDateTime(SDebugTime_Format, Now()) + ': ' + FInternalClassName + ': Длительность компиляции скрипта: ' + LTimeCounter.Format(LTimeCounter.Interval, 0) + ' сек.');
 {$ENDIF}
 
-
 {$IFDEF DEBUG_FORMS}
       FScript.OnExceptionDueExecute := DoExceptionDueExecute;
+{$IFDEF DEBUG}
+      if FScriptDebugMode then begin
+        FScriptDebuggerForm :=
+          TSBaseScriptDebuggerFrm.CreateByParams
+          (
+            Self,
+            TNamedVariants.Create
+            (
+              [
+                TNamedVariant.Create(SConst_Paused, True)
+              ]
+              , True
+            )
+          );
+        TSBaseScriptDebuggerFrm(FScriptDebuggerForm).Show;
+      end;
+{$ENDIF}
 {$ENDIF}
 
       FGetBusy := PrepareFunction('GetBusy', False);
@@ -2428,6 +2448,15 @@ begin
       FTestRunMode := VarToBoolDef(FCreateFormParams.Items[Idx].Value, False);
       FCreateFormParams.Delete(Idx);
     end;
+
+{$IFDEF DEBUG}
+{$IFDEF DEBUG_FORMS}
+    if FCreateFormParams.Find(SBFScriptDebugMode, Idx) then begin
+      FScriptDebugMode := VarToBoolDef(FCreateFormParams.Items[Idx].Value, False);
+      FCreateFormParams.Delete(Idx);
+    end;
+{$ENDIF}
+{$ENDIF}
 
     FInternalFormParams := TNamedVariants.Create(True);
     FInternalFormConstants := TNamedVariants.Create(True);

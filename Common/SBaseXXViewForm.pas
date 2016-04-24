@@ -885,7 +885,9 @@ var
   LHighBound: Integer;
 begin
   LGridKeys := InternalGetGridKeys;
-  if DataSetProvider.Active and (mnSubmit.Visible = ivNever) and (not LGridKeys.IsEmpty) and VarArrayIsPresent(FInitGridKeyValues) then
+  if (mnSubmit.Visible <> ivNever) and (not DataSetProvider.Active) then
+    mnSubmit.ShortCut := ShortCut_Enter
+  else if (not LGridKeys.IsEmpty) and VarArrayIsPresent(FInitGridKeyValues) then
     if (SelectMode in [smSingle, smSingleRepeateAble]) then
       InternalLocateByKey(FInitGridKeyValues)
     else begin
@@ -1215,6 +1217,9 @@ end;
 
 procedure TSBaseXXViewFrm.DataSetAfterOpen(DataSet: TDataSet);
 begin
+  if (mnSubmit.Visible <> ivNever) then
+    mnSubmit.ShortCut := 0;
+
   RefreshTimer.Enabled := FAutoRefresh
                             and DataSet.Active
                             and ( (RefreshTimeout = 0) or (SecondsBetween(FBeforOpenTime, Now) < RefreshTimeout) );
@@ -1260,6 +1265,8 @@ begin
   if (csDestroying in ComponentState) then Exit;
 
   RefreshTimer.Enabled := False;
+  if (mnSubmit.Visible <> ivNever) then
+    mnSubmit.ShortCut := ShortCut_Enter;
 
   {  if ToolBar.Visible then }
   DBGridAfterFocusedRecordChanged(True);

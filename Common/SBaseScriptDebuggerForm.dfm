@@ -8,10 +8,8 @@ inherited SBaseScriptDebuggerFrm: TSBaseScriptDebuggerFrm
   ClientWidth = 899
   FormStyle = fsStayOnTop
   OnDestroy = FormDestroy
-  ExplicitLeft = 535
-  ExplicitTop = 70
   ExplicitWidth = 915
-  ExplicitHeight = 838
+  ExplicitHeight = 834
   PixelsPerInch = 96
   TextHeight = 13
   object SynEdit: TSynEdit [0]
@@ -96,6 +94,11 @@ inherited SBaseScriptDebuggerFrm: TSBaseScriptDebuggerFrm
         Width = 899
         Height = 153
         Align = alClient
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
         TabOrder = 0
         object GridVairablesDBTableView: TcxMDGridDBTableView
           Navigator.Buttons.CustomButtons = <>
@@ -148,6 +151,11 @@ inherited SBaseScriptDebuggerFrm: TSBaseScriptDebuggerFrm
         Width = 899
         Height = 153
         Align = alClient
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
         TabOrder = 0
         object GridWatchDBTableView: TcxMDGridDBTableView
           PopupMenu = pmWatches
@@ -157,7 +165,6 @@ inherited SBaseScriptDebuggerFrm: TSBaseScriptDebuggerFrm
           DataController.DataSource = DataSourceWatch
           DataController.Filter.Options = [fcoCaseInsensitive]
           DataController.KeyFieldNames = 'VarName'
-          DataController.Options = [dcoCaseInsensitive, dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoFocusTopRowAfterSorting]
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
           DataController.Summary.SummaryGroups = <>
@@ -200,7 +207,7 @@ inherited SBaseScriptDebuggerFrm: TSBaseScriptDebuggerFrm
     AlignSplitter = salBottom
     Visible = False
   end
-  inherited BarManager: TdxBarManager
+  inherited BarManager: TdxMDBarManager
     Categories.Strings = (
       #1055#1072#1085#1077#1083#1100' '#1080#1085#1089#1090#1088#1091#1084#1077#1085#1090#1086#1074
       'Watch')
@@ -338,9 +345,6 @@ inherited SBaseScriptDebuggerFrm: TSBaseScriptDebuggerFrm
   inherited ActionList: TActionList
     Left = 86
     Top = 63
-    inherited ActionObjectInspector: TAction
-      Caption = ''
-    end
     object ActionFind: TAction
       ShortCut = 16454
     end

@@ -271,19 +271,21 @@ end;
 
 procedure TBaseDataHandlerSupport.InternalCheckLockErrror(ADataHandler: TCustomDataHandler);
 var
+  LDataSet        : TDataSet;
   LFieldLockId    : TField;
   LFieldLockError : TField;
-  LErrorMessage   : string;
+  LErrorMessage   : String;
 begin
-  if (not ADataHandler.Enabled) or (not ADataHandler.Active) or (ADataHandler.LockOptions.KeyFieldName.IsEmpty) then
+  LDataSet := ADataHandler.DataSet;
+  if (not ADataHandler.Enabled) or (not LDataSet.Active) or (ADataHandler.LockOptions.KeyFieldName.IsEmpty) then
     Exit;
 
   //-- ѕровер€ем успешность блокировки в случае, если пришли на редактирование
-  LFieldLockId := ADataHandler.DataSet.FindField(ADataHandler.LockOptions.KeyFieldName);
+  LFieldLockId := LDataSet.FindField(ADataHandler.LockOptions.KeyFieldName);
   if not Assigned(LFieldLockId) then
     Raise Exception.Create('¬ результируещем наборе данных не найдено поле "' + ADataHandler.LockOptions.KeyFieldName + '" (идентификатор блокировки)!');
 
-  LFieldLockError := ADataHandler.DataSet.FindField(ADataHandler.LockOptions.MessageFieldName);
+  LFieldLockError := LDataSet.FindField(ADataHandler.LockOptions.MessageFieldName);
   if not Assigned(LFieldLockError) then
     Raise Exception.Create('¬ результируещем наборе данных не найдено поле "' + ADataHandler.LockOptions.KeyFieldName + '" (сообщение о блокировке)!');
 
