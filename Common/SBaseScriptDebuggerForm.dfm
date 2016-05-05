@@ -142,9 +142,6 @@ inherited SBaseScriptDebuggerFrm: TSBaseScriptDebuggerFrm
       Padding.Top = 3
       Caption = #1055#1088#1086#1089#1084#1086#1090#1088
       ImageIndex = 1
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object GridWatch: TcxMDGrid
         Left = 0
         Top = 3
@@ -352,71 +349,10 @@ inherited SBaseScriptDebuggerFrm: TSBaseScriptDebuggerFrm
       ShortCut = 114
     end
   end
-  object VTableVariables: TVirtualTable
-    Options = [voPersistentData, voStored, voSkipUnSupportedFieldTypes]
-    FieldDefs = <
-      item
-        Name = 'VarName'
-        DataType = ftString
-        Size = 256
-      end
-      item
-        Name = 'VarType'
-        DataType = ftString
-        Size = 256
-      end
-      item
-        Name = 'VarClassType'
-        DataType = ftString
-        Size = 256
-      end
-      item
-        Name = 'VarValueStr'
-        DataType = ftString
-        Size = 2000
-      end>
-    Left = 88
-    Top = 224
-    Data = {
-      0300040007005661724E616D6501000001000000000700566172547970650100
-      0001000000000C00566172436C6173735479706501000001000000000B005661
-      7256616C75655374720100D00700000000000000000000}
-  end
   object DataSourceVariables: TDataSource
     DataSet = VTableVariables
     Left = 160
     Top = 248
-  end
-  object VTableWatch: TVirtualTable
-    Options = [voPersistentData, voStored, voSkipUnSupportedFieldTypes]
-    BeforePost = VTableWatchBeforePost
-    FieldDefs = <
-      item
-        Name = 'VarName'
-        DataType = ftString
-        Size = 256
-      end
-      item
-        Name = 'VarType'
-        DataType = ftString
-        Size = 256
-      end
-      item
-        Name = 'VarClassType'
-        DataType = ftString
-        Size = 256
-      end
-      item
-        Name = 'VarValueStr'
-        DataType = ftString
-        Size = 2000
-      end>
-    Left = 88
-    Top = 344
-    Data = {
-      0300040007005661724E616D6501000001000000000700566172547970650100
-      0001000000000C00566172436C6173735479706501000001000000000B005661
-      7256616C75655374720100D00700000000000000000000}
   end
   object DataSourceWatch: TDataSource
     DataSet = VTableWatch
@@ -438,5 +374,52 @@ inherited SBaseScriptDebuggerFrm: TSBaseScriptDebuggerFrm
     UseOwnFont = False
     Left = 80
     Top = 488
+  end
+  object VTableVariables: TSQLDataSetProvider
+    Params = <>
+    CachedUpdates = False
+    DataSetObject = bdsoMemory
+    Left = 312
+    Top = 248
+    object VTableVariablesVarName: TStringField
+      FieldName = 'VarName'
+      Size = 256
+    end
+    object VTableVariablesVarType: TStringField
+      FieldName = 'VarType'
+      Size = 256
+    end
+    object VTableVariablesVarClassType: TStringField
+      FieldName = 'VarClassType'
+      Size = 256
+    end
+    object VTableVariablesVarValueStr: TStringField
+      FieldName = 'VarValueStr'
+      Size = 2000
+    end
+  end
+  object VTableWatch: TSQLDataSetProvider
+    Params = <>
+    CachedUpdates = False
+    DataSetObject = bdsoMemory
+    BeforePost = VTableWatchBeforePost
+    Left = 312
+    Top = 368
+    object VTableWatchVarName: TStringField
+      FieldName = 'VarName'
+      Size = 256
+    end
+    object VTableWatchVarType: TStringField
+      FieldName = 'VarType'
+      Size = 256
+    end
+    object VTableWatchVarClassType: TStringField
+      FieldName = 'VarClassType'
+      Size = 256
+    end
+    object VTableWatchVarValueStr: TStringField
+      FieldName = 'VarValueStr'
+      Size = 2000
+    end
   end
 end

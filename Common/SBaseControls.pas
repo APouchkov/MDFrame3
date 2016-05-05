@@ -469,6 +469,8 @@ type
     FSavedMethod      : TMethod;
     FSelectButtonIndex: SmallInt;
     FClearButtonIndex : SmallInt;
+    FViewButtonIndex  : SmallInt;
+    FViewButton       : TObject;
 
     FParamName : String;
     FParamCount: Byte;
@@ -500,6 +502,8 @@ type
 
     procedure Select;
     procedure Clear;
+    procedure View;
+
     function  GetCanModify: Boolean;
     procedure SetReadOnly(const Value: Boolean); virtual;
 
@@ -539,6 +543,8 @@ type
     procedure SetSelectMenuSQL(AValue: TStrings);
 
     procedure SetExtractSQL(const Value: String);
+    procedure SetViewButtonIndex(const Value: SmallInt);
+    function GetViewButton: TObject;
   protected
     FInSelectNotify: Boolean;
     FSkipExtractParamValues: Boolean;
@@ -572,11 +578,14 @@ type
     property CanModify: Boolean read GetCanModify;
   published
     property Control: TComponent read FControl write SetControl;
+    property ViewButton: TObject read GetViewButton;
+
     property SubControlIndex: SmallInt read FSubControlIndex write SetSubControlIndex default -1;
     property SelectButtonIndex: SmallInt read FSelectButtonIndex write SetSelectButtonIndex default -1;
     property SelectMenu: TdxBarPopupMenu read GetSelectMenu write SetSelectMenu;
     property SelectMenuSQL: TStrings read GetSelectMenuSQL write SetSelectMenuSQL;
     property ClearButtonIndex: SmallInt read FClearButtonIndex write SetClearButtonIndex default -1;
+    property ViewButtonIndex: SmallInt read FViewButtonIndex write SetViewButtonIndex default -1;
 
     property ReadOnly: Boolean read FReadOnly write SetReadOnly default False;
 
@@ -1600,7 +1609,8 @@ constructor TSBaseCustomLookupComponentControl.Create(AOwner: TComponent);
 begin
   FSelectButtonIndex  := -1;
   FClearButtonIndex   := -1;
-  FSubControlIndex       := -1;
+  FViewButtonIndex    := -1;
+  FSubControlIndex    := -1;
   FParamValueLocal    := True;
 //  FParamValuePrior    := unAssigned;
 
@@ -1668,8 +1678,10 @@ begin
 //  if Assigned(FcxCustomDataController) and (not DataSourceRequired) then
 //    FcxCustomDataController.RemoveDataChangedListener(Self, ValueChanged);
 
+  FreeAndNil(FViewButton);
   FreeAndNil(FSelectMenuSQLController);
   FreeAndNil(FDataLink);
+
   if Assigned(FSelectMenu) and (FSelectMenu.Owner = Self) then
     FreeAndNil(FSelectMenu);
 
@@ -1814,6 +1826,9 @@ begin
 
     if FClearButtonIndex >= 0 then
       SetClearButtonIndex(FClearButtonIndex);
+
+    if FViewButtonIndex >= 0 then
+      SetViewButtonIndex(FViewButtonIndex);
   end;
 end;
 
@@ -1879,6 +1894,39 @@ begin
   end;
 end;
 
+procedure TSBaseCustomLookupComponentControl.SetViewButtonIndex(const Value: SmallInt);
+begin
+  Assert(Value >= -1);
+  FViewButtonIndex := Value;
+
+  if Assigned(FcxCustomEditProperties) then begin
+    SetOnButtonClickEvent;
+    if (Value >= 0) then
+      with FcxCustomEditProperties do begin
+        while Buttons.Count <= Value do
+          Buttons.Add;
+        with Buttons[Value] do begin
+          Kind := bkText;
+          Caption := '->';
+        end;
+      end;
+  end;
+end;
+
+procedure TSBaseCustomLookupComponentControl.View;
+var
+  LProperties: TBaseItemReaction;
+begin
+//  if CanModify then begin
+
+  LProperties := TSBaseFrm(FSBaseFrm).ItemsReactions.FindItemProperties(ViewButton);
+//  if not Assigned(LProperties) then LProperties := TSBaseFrm(FSBaseFrm).ItemsReactions.FindItemProperties(FControl);
+  if Assigned(LProperties) then begin
+    LProperties.Execute(TSBaseFrm(FSBaseFrm).GetFormParamValues, TSBaseFrm(FSBaseFrm).ConfirmMessage, Self);
+  end;
+//  end;
+end;
+
 procedure TSBaseCustomLookupComponentControl.AssignTo(Dest: TPersistent);
 begin
   Assert(Dest is TSBaseCustomLookupComponentControl);
@@ -1888,6 +1936,7 @@ begin
     SelectButtonIndex   := Self.SelectButtonIndex;
     SelectMenu          := Self.SelectMenu;
     ClearButtonIndex    := Self.ClearButtonIndex;
+    ViewButtonIndex     := Self.ViewButtonIndex;
     ParamName           := Self.ParamName;
     ParamValue          := Self.ParamValue;
     OnParamValueChanged := Self.OnParamValueChanged;
@@ -1912,6 +1961,9 @@ begin
     TcxCustomEditCrack(Sender).DoHideEdit(True);
   end else if AButtonIndex = FClearButtonIndex then begin
     Clear;
+    TcxCustomEditCrack(Sender).DoHideEdit(True);
+  end else if AButtonIndex = FViewButtonIndex then begin
+    View;
     TcxCustomEditCrack(Sender).DoHideEdit(True);
   end else begin
     if FSavedMethod.Code <> nil then
@@ -1950,6 +2002,13 @@ end;
 function TSBaseCustomLookupComponentControl.GetSelectMenuSQL: TStrings;
 begin
   Result := GetOrCreateSelectMenuSQLController.SQL;
+end;
+
+function TSBaseCustomLookupComponentControl.GetViewButton: TObject;
+begin
+  if not Assigned(FViewButton) then
+    FViewButton := TObject.Create;
+  Result := FViewButton
 end;
 
 procedure TSBaseCustomLookupComponentControl.SetSelectMenuSQL(AValue: TStrings);
@@ -2133,7 +2192,7 @@ begin
         TdxBarPopupMenu(FSelectMenu).PopupFromCursorPos
     end else begin
       LProperties := TSBaseFrm(FSBaseFrm).ItemsReactions.FindItemProperties(Self);
-      if not Assigned(LProperties) then LProperties := TSBaseFrm(FSBaseFrm).ItemsReactions.FindItemProperties(FControl);
+//      if not Assigned(LProperties) then LProperties := TSBaseFrm(FSBaseFrm).ItemsReactions.FindItemProperties(FControl);
       if Assigned(LProperties) then begin
         LProperties.OnSelect.Notify := OnSelectNotify;
         LProperties.Execute(TSBaseFrm(FSBaseFrm).GetFormParamValues, TSBaseFrm(FSBaseFrm).ConfirmMessage);

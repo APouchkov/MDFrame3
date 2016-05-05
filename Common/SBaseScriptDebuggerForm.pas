@@ -15,7 +15,7 @@ uses
   cxFilter, cxData, cxDataStorage, cxEdit, cxNavigator, Data.DB, cxDBData,
   cxGridLevel, cxGridCustomView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxGrid, MemDS, VirtualTable, cxSplitter, cxMDGrid,
-  dxSkinsCore, dxSkinsDefaultPainters, dxMDBar;
+  dxSkinsCore, dxSkinsDefaultPainters, dxMDBar, SBaseDataModule;
 
 type
   TSBaseFrmCrack = class(TSBaseFrm);
@@ -45,8 +45,6 @@ type
     pcDebugger                : TcxPageControl;
     tsVariables               : TcxTabSheet;
     tsWatch                   : TcxTabSheet;
-
-    VTableVariables           : TVirtualTable;
     DataSourceVariables       : TDataSource;
 
     GridVairables             : TcxMDGrid;
@@ -56,8 +54,6 @@ type
     ColumnVariableType        : TcxGridDBColumn;
     ColumnVariableClass       : TcxGridDBColumn;
     ColumnVariableValue       : TcxGridDBColumn;
-
-    VTableWatch               : TVirtualTable;
     DataSourceWatch           : TDataSource;
 
     GridWatch                 : TcxMDGrid;
@@ -67,6 +63,16 @@ type
     ColumnWatchType           : TcxGridDBColumn;
     ColumnWatchClass          : TcxGridDBColumn;
     ColumnWatchValue          : TcxGridDBColumn;
+    VTableVariables: TSQLDataSetProvider;
+    VTableWatch: TSQLDataSetProvider;
+    VTableVariablesVarName: TStringField;
+    VTableVariablesVarType: TStringField;
+    VTableVariablesVarClassType: TStringField;
+    VTableVariablesVarValueStr: TStringField;
+    VTableWatchVarName: TStringField;
+    VTableWatchVarType: TStringField;
+    VTableWatchVarClassType: TStringField;
+    VTableWatchVarValueStr: TStringField;
 
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean); override;
     procedure mnRunClick(Sender: TObject);
@@ -291,7 +297,7 @@ begin
   ReshowButtons;
 end;
 
-procedure TSBaseScriptDebuggerFrm.ShowVariables(ACurrentScript : TfsScript);
+procedure TSBaseScriptDebuggerFrm.ShowVariables(ACurrentScript: TfsScript);
 var
   I         : Integer;
   LVariable : TfsCustomVariable;
@@ -299,7 +305,8 @@ begin
   VTableVariables.DisableControls;
   try
     VTableVariables.Active := True;
-    VTableVariables.Clear;
+//    VTableVariables.Clear;
+
     if (not pcDebugger.Visible) or (pcDebugger.ActivePage <> tsVariables) then begin
       FNeewShowVariables := True;
       Exit;
@@ -309,12 +316,12 @@ begin
     if Assigned(ACurrentScript) then begin
       for I := 0 to ACurrentScript.VariableCount-1 do begin
         LVariable := ACurrentScript.VariableByIndex(I);
-        if (not LVariable.IsMacro)
-        and (not LVariable.InheritsFrom(TfsProcVariable))
-        and (not (LVariable.Typ = fvtClass))
+        if (not LVariable.IsMacro) and (not LVariable.InheritsFrom(TfsProcVariable))
+            and (LeftStr(LVariable.Name, 10) <> '_WithList_')
+          // and (not (LVariable.Typ = fvtClass))
         then begin
           VTableVariables.Append;
-          FeelVTableFromVariable(LVariable, VTableVariables, False);
+            FeelVTableFromVariable(LVariable, VTableVariables, False);
           VTableVariables.Post;
         end;
       end;
@@ -457,7 +464,7 @@ begin
   Result := TSBaseFrmCrack(Owner)
 end;
 
-procedure TSBaseScriptDebuggerFrm.FeelVTableFromVariable(AVariable: TfsCustomVariable; AVDataSet: TDataSet; AForceFill : Boolean);
+procedure TSBaseScriptDebuggerFrm.FeelVTableFromVariable(AVariable: TfsCustomVariable; AVDataSet: TDataSet; AForceFill: Boolean);
 
   procedure _CheckEdit;
   begin
@@ -472,18 +479,17 @@ begin
   _CheckEdit;
 
   if not Assigned(AVariable) then begin
-    AVDataSet.FieldValues['VarType'] := Null;
+    AVDataSet.FieldValues['VarType']      := Null;
     AVDataSet.FieldValues['VarClassType'] := Null;
-    AVDataSet.FieldValues['VarValueStr'] := 'Имя не найдено!';
+    AVDataSet.FieldValues['VarValueStr']  := 'Имя не найдено!';
   end else begin
     if not VarIsEqual(AVDataSet.FieldValues['VarName'], AVariable.Name) then
       AVDataSet.FieldValues['VarName'] := AVariable.Name;
 
-    AVDataSet.FieldValues['VarType'] := AVariable.TypeName;
+    AVDataSet.FieldValues['VarType']      := AVariable.TypeName;
     AVDataSet.FieldValues['VarClassType'] := AVariable.ClassName;
 
-    if  (not AVariable.InheritsFrom(TfsProcVariable))
-    and (not (AVariable.Typ = fvtClass))
+    if  (not AVariable.InheritsFrom(TfsProcVariable)) and (not (AVariable.Typ = fvtClass))
     then
       AVDataSet.FieldValues['VarValueStr'] := VarToStr( Variant(Pointer(AVariable.PValue)^) )
     else
@@ -520,8 +526,9 @@ begin
     LVarName := SynEdit.SelText;
     if not LVarName.IsEmpty then
       VTableWatch.Append;
-      VTableWatch.FieldValues['VarName'] := LVarName;
+        VTableWatch.FieldValues['VarName'] := LVarName;
       VTableWatch.Post;
+
       if FWaitNextStepLock then
         ShowWatch(FCurrentScript)
       else
@@ -538,18 +545,16 @@ begin
     Accept := False;
 end;
 
-procedure TSBaseScriptDebuggerFrm.ReedWatchVariableInfo(ACurrentScript : TfsScript; AVDataSet: TDataSet);
+procedure TSBaseScriptDebuggerFrm.ReedWatchVariableInfo(ACurrentScript: TfsScript; AVDataSet: TDataSet);
 
-  function _SeekVariableByName(AScript : TfsScript; AName : String): TfsCustomVariable;
+  function _SeekVariableByName(AScript: TfsScript; const AName: String): TfsCustomVariable;
   var
     I : Integer;
   begin
-    if not Assigned(ACurrentScript) then begin
-      Result := nil;
-      Exit;
-    end;
+    if not Assigned(AScript) then
+      Exit(nil);
 
-    for I := 0 to AScript.VariableCount-1 do begin
+    for I := 0 to AScript.VariableCount - 1 do begin
       Result := AScript.VariableByIndex(I);
       if Result.Name = AName then
         Exit;

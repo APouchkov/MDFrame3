@@ -331,7 +331,7 @@ type
     procedure SetOnPopupEvent(AValue: TNotifyEvent);
 
     procedure ItemClick(Sender: TObject);
-    function Execute(AGetVarValuesFunction: TGetVarValuesFunction; AConfirmMessageFunction: TConfirmMessageFunction): Integer;
+    function Execute(AGetVarValuesFunction: TGetVarValuesFunction; AConfirmMessageFunction: TConfirmMessageFunction; AItem: TObject = nil): Integer;
     function SubItemCount: Integer;
     function HasEnabledSubItem: Boolean;
     function SubItemEnabled(Index: Integer): Boolean;
@@ -903,7 +903,7 @@ begin
   inherited;
 end;
 
-function TBaseItemReaction.Execute(AGetVarValuesFunction: TGetVarValuesFunction; AConfirmMessageFunction: TConfirmMessageFunction): Integer;
+function TBaseItemReaction.Execute(AGetVarValuesFunction: TGetVarValuesFunction; AConfirmMessageFunction: TConfirmMessageFunction; AItem: TObject): Integer;
 var
   J, LIdx: Integer;
   LDone: Boolean;
@@ -926,6 +926,8 @@ var
   LfsFunction: TfsProcVariable;
 begin
   Result := 0;
+  if AItem = nil then
+    AItem := FItem;
 //  if Self = nil then Exit;
 
   with OnClick do
@@ -935,7 +937,7 @@ begin
   try
     { 1. Если задан SQL.Text то сначала обработаем его }
     if (OnClick.SQL.Count > 0) then begin
-      LVarCollection := TSBaseFrm(GetForm).ExecSQL(OnClick.SQL.Text, TNamedVariants.Create(False), AGetVarValuesFunction, FItem, TSQLStrings(OnClick.SQL).Thread);
+      LVarCollection := TSBaseFrm(GetForm).ExecSQL(OnClick.SQL.Text, TNamedVariants.Create(False), AGetVarValuesFunction, AItem, TSQLStrings(OnClick.SQL).Thread);
       LVarCollection.UnknownAsNull := False;
 
       if LVarCollection.Find(SConst_NotificationTableChangesUpdatedObjects, J) then begin
@@ -988,7 +990,7 @@ begin
 
       // Получим значения параметров, если они есть
       if (not LParams.IsEmpty) then begin
-        LVarParams := TSBaseFrm(GetForm).PrepareParameters(LParams, LVarCollection, AGetVarValuesFunction, FItem);
+        LVarParams := TSBaseFrm(GetForm).PrepareParameters(LParams, LVarCollection, AGetVarValuesFunction, AItem);
         LVarParams.ClearUndefined;
       end else
         LVarParams := TNamedVariants.Create(True);
@@ -1030,7 +1032,7 @@ begin
 
     // Соберём параметры для Class-вызова
     if (not LClassParams.IsEmpty) then begin
-      LVarParams := TSBaseFrm(GetForm).PrepareParameters(LClassParams, LVarCollection, AGetVarValuesFunction, FItem);
+      LVarParams := TSBaseFrm(GetForm).PrepareParameters(LClassParams, LVarCollection, AGetVarValuesFunction, AItem);
       LVarParams.ClearUndefined;
 
       // Вернулся ClassName?
@@ -1125,7 +1127,7 @@ begin
                           OnClick.InPlaceParams,
                           LVarCollection,
                           GetFormDataSourceParamValues,
-                          FItem
+                          AItem
                         );
 
           InPlaceInsert;
@@ -1157,7 +1159,7 @@ begin
                             OnClick.InPlaceParams,
                             LVarCollection,
                             FDataSourceControlProperties.GetFormDataSourceParamAndFieldValues,
-                            FItem
+                            AItem
                           );
 
             //LValue := FDataSourceControlProperties.GetFormDataSourceParamAndFieldValues(OnClick.InPlaceParams, LUnknownParams);
@@ -1182,7 +1184,7 @@ begin
                         OnClick.InPlaceParams,
                         LVarCollection,
                         FDataSourceControlProperties.GetFormDataSourceParamAndFieldValues,
-                        FItem
+                        AItem
                       );
 
         //LValue := GetFormDataSourceParamAndFieldValues(OnClick.InPlaceParams, LUnknownParams);

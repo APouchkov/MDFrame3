@@ -1016,6 +1016,8 @@ end;
 function TDataSourceDefaultUpdateControlProperties.GetDataSet(const Index: Integer): TDataSet;
 begin
   Result := DataSource.DataSet;
+  if (Index = 1) then
+    Result := Result.Source;
 end;
 
 function TDataSourceDefaultUpdateControlProperties.GetDataSource: TDataSource;
@@ -1797,7 +1799,7 @@ begin
         Result := TcxGridDBDataController(LFocusedView.DataController).DataSet;
     end else with TcxGridDBDataController(LcxCustomDataController) do
       if Assigned(DataSource) then
-        Result := DataSource.DataSet
+        Result := DataSource.DataSet.Source
 end;
 
 function TDataSourceCxGridTableViewUpdateControlProperties.GetFormDataSourceParamAndFieldValues(const AFieldNames: String; var AUnknownFields: String): Variant;
