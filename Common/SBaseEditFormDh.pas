@@ -213,8 +213,9 @@ begin
 end;
 
 procedure TSBaseEditFrmDh.InternalInit;
-{$IFDEF DEBUG}
 var
+  I: Integer;
+{$IFDEF DEBUG}
   LTimeCounter: TTimeCounter;
   LDataSetProviderMain: TSQLDataSetProvider;
 {$ENDIF}
@@ -266,7 +267,22 @@ begin
       LDataSetProviderMain.Params.Load(Variables, lvcAlways);
     end;
 
-    if (not ExternalDataUsed) then begin
+    if (ExternalDataUsed) then begin
+//      DataHandlerMain.DisableControls;
+//      try
+//        FIsBusy := True;
+//        DataHandlerMain.FIsOpening := True;
+
+        for I := 0 to Pred(DataHandlerMain.Count) do begin
+          DataHandlerMain.Children[I].Open;
+        end;
+//      finally
+//        DataHandlerMain.EnableControls;
+//        DataHandlerMain.FIsOpening := False;
+//        DataHandlerMain.FIsBusy := False;
+//      end;
+
+    end else begin
       //-- Работаем со СВОИМИ DataHandler и DataSet
       try
         //-- Если идет повтороное переоткрытие карточки с открытым DataHandlerMain

@@ -1951,13 +1951,9 @@ begin
   Assert(LDataHandlerSupport <> nil, 'Support interface not selected');
 {$ENDIF}
 
-//  if FReadOnly then
-//    CheckDataHandlerSupport.DoSetReadOnly(Self, True);
-
   LDataSetProvider.DisableControls;
   try
     FIsBusy := True;
-    //SyncActive; //TODO: Зачем это?
 
     if IsRoot then
       TDataHandler(Self).FIsOpening := True;
@@ -1965,11 +1961,10 @@ begin
     InternalOpen;
 
     for I := 0 to Pred(Count) do begin
-      Children[i].Open;
+      Children[I].Open;
     end;
   finally
     LDataSetProvider.EnableControls;
-//    SyncActive;
     if IsRoot then
       TDataHandler(Self).FIsOpening := False;
     FIsBusy := False;
@@ -2449,6 +2444,8 @@ var
   LField: TField;
   I: Integer;
   LDataHandler: TCustomDataHandler;
+  LDataSetProvider: TSQLDataSetProvider;
+  LOwner: TComponent;
 begin
   LParams := DataSet.Params;
   if not Assigned(LParams) then
@@ -2457,13 +2454,19 @@ begin
   for I := 0 to Pred(LParams.Count) do begin
     LDataHandler := Parent;
     while Assigned(LDataHandler) do begin
-      LField := LDataHandler.DataSet.FindField(RemovePrefixIfPresent(LParams[I].Name, SConst_PARAM_));
+      LDataSetProvider := LDataHandler.DataSet;
+      LField := LDataSetProvider.FindField(RemovePrefixIfPresent(LParams[I].Name, SConst_PARAM_));
       if Assigned(LField) then begin
         LParams[I].Value := LField.AsVariant;
         Break;
       end;
 
-      MParams := LDataHandler.DataSet.Params;
+      // Для виртуальных датасетов режима amDataSet
+      LOwner := LDataSetProvider.Owner;
+      if Assigned(LOwner) and (LOwner is TSubDataHandler) then
+        LDataSetProvider := TSubDataHandler(LOwner).DataSet;
+
+      MParams := LDataSetProvider.Params;
       if Assigned(MParams) then begin
         LParam := MParams.FindParam(LParams[I].Name);
         if not Assigned(LParam) then

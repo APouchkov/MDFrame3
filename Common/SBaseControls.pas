@@ -137,24 +137,6 @@ type
     constructor Create(AControl: TComponent); override;
   end;
 
-  TcxCustomCheckBoxInterface = class(TCustomControlInterface)
-  private
-    FDataBinding: TcxDBEditDataBinding;
-
-    function GetProperties: TcxCustomCheckBoxProperties;
-
-    function  GetReadOnly: Boolean; override;
-    procedure SetReadOnly(const Value: Boolean); override;
-
-    function  GetDataSource: TDataSource; override;
-  public
-    constructor Create(AControl: TComponent); override;
-
-    procedure DrawState(AReadOnly: Boolean; const AColor: TcxStyle); override;
-    function FieldDepended: Boolean; override;
-    function FieldCanModify: Boolean; override;
-  end;
-
   TcxCustomEditInterface = class(TCustomControlInterface)
   private
     [Weak]FDataBinding: TcxEditDataBinding;
@@ -172,6 +154,11 @@ type
 
     function FieldDepended: Boolean; override;
     function FieldCanModify: Boolean; override;
+  end;
+
+  TcxCustomCheckBoxInterface = class(TcxCustomEditInterface)
+  public
+    procedure DrawState(AReadOnly: Boolean; const AColor: TcxStyle); override;
   end;
 
   TcxCustomDropDownEditInterface = class(TcxCustomEditInterface)
@@ -786,6 +773,7 @@ begin
   Result := GetRules(AControl);
   if Result = nil then begin
     Result := TControlStateRules.Create(AControl);
+    Result.FParent := AControl;
     Result.Name := ComponentName;
     Result.FCreatedByLinkedControl := ACreatedByLinkedControl;
     Result.DisableTabStopWhenReadOnly := False;
@@ -996,54 +984,9 @@ end;
 
 { TcxCustomCheckBoxInterface }
 
-function TcxCustomCheckBoxInterface.GetProperties: TcxCustomCheckBoxProperties;
-begin
-  Result := TcxCustomCheckBoxProperties(TcxCustomCheckBox(FControl).Properties)
-end;
-
-function TcxCustomCheckBoxInterface.GetDataSource: TDataSource;
-begin
-  if FDataBinding <> nil then
-    Result := FDataBinding.DataSource
-  else
-    Result := nil
-end;
-
-function TcxCustomCheckBoxInterface.GetReadOnly: Boolean;
-begin
-  Result := GetProperties.ReadOnly;
-end;
-
-procedure TcxCustomCheckBoxInterface.SetReadOnly(const Value: Boolean);
-begin
-  GetProperties.ReadOnly := Value;
-end;
-
-constructor TcxCustomCheckBoxInterface.Create(AControl: TComponent);
-begin
-  inherited;
-  if FControl is TcxDBCheckBox then
-    FDataBinding := TcxDBCheckBox(FControl).DataBinding
-  else
-    FDataBinding := nil
-end;
-
 procedure TcxCustomCheckBoxInterface.DrawState(AReadOnly: Boolean; const AColor: TcxStyle);
 begin
   TcxCustomCheckBox(FControl).Enabled := (not AReadOnly);
-end;
-
-function TcxCustomCheckBoxInterface.FieldCanModify: Boolean;
-begin
-  if FDataBinding <> nil then
-    Result := FDataBinding.DataLink.CanModify
-  else
-    Result := False
-end;
-
-function TcxCustomCheckBoxInterface.FieldDepended: Boolean;
-begin
-  Result := (FDataBinding <> nil)
 end;
 
 { TcxCustomEditInterface }
@@ -1071,38 +1014,27 @@ end;
 constructor TcxCustomEditInterface.Create(AControl: TComponent);
 begin
   inherited;
-
-  if IsPublishedProp(FControl, SConst_DataBinding) then begin
-    FDataBinding := TcxEditDataBinding(GetObjectProp(FControl, SConst_DataBinding));
-    if not ((FDataBinding is TcxDBEditDataBinding) or (FDataBinding is TcxMDDBEditDataBinding)) then
-      FDataBinding := nil;
-  end else
-    FDataBinding := nil
+  FDataBinding := TcxCustomEditCrack(FControl).DataBinding;
 end;
 
 function TcxCustomEditInterface.FieldCanModify: Boolean;
 begin
-  Result := False;
-  if FDataBinding <> nil then
-    if FDataBinding is TcxDBEditDataBinding then
-      Result := TcxDBEditDataBinding(FDataBinding).DataLink.CanModify
-    else if FDataBinding is TcxMDDBEditDataBinding then
-      Result := TcxMDDBEditDataBinding(FDataBinding).DataLink.CanModify
+  Result := FDataBinding.CanModify
 end;
 
 function TcxCustomEditInterface.FieldDepended: Boolean;
 begin
-  Result := (FDataBinding <> nil)
+  Result := (FDataBinding is TcxDBEditDataBinding)
 end;
 
 function TcxCustomEditInterface.GetDataSource: TDataSource;
 begin
   Result := nil;
-  if FDataBinding <> nil then
-    if FDataBinding is TcxDBEditDataBinding then
-      Result := TcxDBEditDataBinding(FDataBinding).DataSource
-    else if FDataBinding is TcxMDDBEditDataBinding then
-      Result := TcxMDDBEditDataBinding(FDataBinding).DataSource
+
+  if FDataBinding is TcxDBEditDataBinding then
+    Result := TcxDBEditDataBinding(FDataBinding).DataSource
+  else if FDataBinding is TcxMDDBEditDataBinding then
+    Result := TcxMDDBEditDataBinding(FDataBinding).DataSource
 end;
 
 { TcxCustomDropDownEditInterface }
@@ -1649,7 +1581,6 @@ var
   LControlStateRules: TControlStateRules;
 begin
   if not (csLoading in ComponentState) and Assigned(FControl) then begin
-//  if Assigned(FControl) then begin
     LControlStateRules := TControlStateRules.CreateRules(FControl, True);
     if LControlStateRules.CreatedByLinkedControl then
       with LControlStateRules do begin
@@ -1661,10 +1592,6 @@ begin
         else
           ModifyState := bfcsDefaultWriteAble;
       end;
-
-//    if Assigned(DataSource) and (not DataField.IsEmpty) then begin
-//    end else if Assigned(LControlStateRules) and LControlStateRules.CreatedByLinkedControl then
-//      LControlStateRules.Free;
   end;
 end;
 
@@ -1963,8 +1890,10 @@ begin
     Clear;
     TcxCustomEditCrack(Sender).DoHideEdit(True);
   end else if AButtonIndex = FViewButtonIndex then begin
-    View;
-    TcxCustomEditCrack(Sender).DoHideEdit(True);
+    if IsParamPresent then begin
+      View;
+      TcxCustomEditCrack(Sender).DoHideEdit(True);
+    end;
   end else begin
     if FSavedMethod.Code <> nil then
       TcxEditButtonClickEvent(FSavedMethod)(Sender, AButtonIndex);

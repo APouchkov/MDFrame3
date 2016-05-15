@@ -2629,7 +2629,7 @@ end;
 procedure TSBaseFrm.RegisterControlStateRule(AControl: TComponent; AControlModifyState: TControlDefaultModifyState = bfcsDefaultWriteAble; ADataSource: TDataSource = nil; const AFieldName: String = '');
 begin
   with TControlStateRules.CreateRules(AControl) do begin
-    ModifyState  := AControlModifyState;
+    ModifyState         := AControlModifyState;
     DataSource          := ADataSource;
 
     if ADataSource <> nil then

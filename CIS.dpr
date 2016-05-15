@@ -1,4 +1,4 @@
-program BackOffice;
+program CIS;
 
 uses
   FastMM4,
@@ -114,7 +114,8 @@ uses
   cxMDVGrid in 'Packages\cxMDVGrid\cxMDVGrid.pas',
   SBaseXml in 'Common\SBaseXml.pas',
   SBaseCustomEditForm in 'Common\SBaseCustomEditForm.pas' {SBaseCustomEditFrm},
-  SBaseEditForm in 'Common\SBaseEditForm.pas' {SBaseEditFrm};
+  SBaseEditForm in 'Common\SBaseEditForm.pas' {SBaseEditFrm},
+  cxEditedFieldCheckBox in 'Packages\cxEditedFieldCheckBox\cxEditedFieldCheckBox.pas';
 
 {$R *.RES}
 
