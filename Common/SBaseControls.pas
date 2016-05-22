@@ -1024,7 +1024,7 @@ end;
 
 function TcxCustomEditInterface.FieldDepended: Boolean;
 begin
-  Result := (FDataBinding is TcxDBEditDataBinding)
+  Result := (FDataBinding is TcxDBEditDataBinding) or (FDataBinding is TcxMDDBEditDataBinding);
 end;
 
 function TcxCustomEditInterface.GetDataSource: TDataSource;
@@ -1883,16 +1883,18 @@ end;
 
 procedure TSBaseCustomLookupComponentControl.ButtonOnClickCx(Sender: TObject; AButtonIndex: Integer);
 begin
+  TcxCustomEditCrack(Sender).DoHideEdit(True);
+
   if AButtonIndex = FSelectButtonIndex then begin
     Select;
-    TcxCustomEditCrack(Sender).DoHideEdit(True);
+//    TcxCustomEditCrack(Sender).DoHideEdit(True);
   end else if AButtonIndex = FClearButtonIndex then begin
     Clear;
-    TcxCustomEditCrack(Sender).DoHideEdit(True);
+//    TcxCustomEditCrack(Sender).DoHideEdit(True);
   end else if AButtonIndex = FViewButtonIndex then begin
     if IsParamPresent then begin
       View;
-      TcxCustomEditCrack(Sender).DoHideEdit(True);
+//      TcxCustomEditCrack(Sender).DoHideEdit(True);
     end;
   end else begin
     if FSavedMethod.Code <> nil then

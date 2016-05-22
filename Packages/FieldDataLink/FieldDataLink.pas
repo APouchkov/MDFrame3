@@ -555,17 +555,21 @@ end;
 function TMDFieldDataLink.GetCanModify: Boolean;
 var
   I: Integer;
+  LDataSet: TDataSet;
 begin
   Result := DataIndepended;
 
-  if (not Result) and (DataSet <> nil) and DataSet.Active and DataSet.CanModify then
-    if MultiFields then begin
-      for I := 0 to Pred(FieldsCount) do
-        if not Fields[I].CanModify then Exit;
+  if (not Result) then begin
+    LDataSet := DataSet;
+    if Assigned(LDataSet) and LDataSet.Active and LDataSet.CanModify then
+      if MultiFields then begin
+        for I := 0 to Pred(FieldsCount) do
+          if not Fields[I].CanModify then Exit;
 
-      Result := FieldsCount > 0;
-    end else
-      Result := ((Field <> nil) and Field.CanModify);
+        Result := FieldsCount > 0;
+      end else
+        Result := ((Field <> nil) and Field.CanModify);
+  end;
 end;
 
 function TMDFieldDataLink.GetDataSource: TDataSource;

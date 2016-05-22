@@ -164,7 +164,7 @@ end;
 
 function TcxMDDBEditDataBinding.CanModify: Boolean;
 begin
-  Result := inherited CanModify and DataLink.CanModify;
+  Result := (inherited CanModify) and DataLink.CanModify;
 end;
 
 function TcxMDDBEditDataBinding.CanPostEditorValue: Boolean;
