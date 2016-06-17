@@ -1173,6 +1173,11 @@ begin
   CanHdr := pCanHdr(PAnsiChar(FExpr) + FExpr.iLiteralStart + Offset);
 
   case DataType of
+    fldUINT8:
+    begin
+      Result := PByte(CanHdr)^;
+      SetResult(DataType, SizeOf(Byte));
+    end;
     fldINT16:
     begin
       Result := PSmallInt(CanHdr)^;

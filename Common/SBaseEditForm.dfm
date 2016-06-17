@@ -8,4 +8,7 @@ inherited SBaseEditFrm: TSBaseEditFrm
       0
       0)
   end
+  inherited ActionList: TActionList
+    Left = 454
+  end
 end

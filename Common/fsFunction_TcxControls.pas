@@ -12,7 +12,7 @@ uses
   cxPC, cxTL, cxDBTL, cxLookupDBGrid, cxDBCheckComboBox, cxMDLookupTreeComboBox,
   SBaseCxUtils, cxDropDownEdit, cxDBEdit, RichEdit, cxRichEdit, Messages,
   cxContainer, cxImageComboBox, cxMultiFieldsDBDataBinding, cxScrollBox,
-  dxMDWizardControl
+  cxImageLookupComboBox, dxMDWizardControl
 {$IFDEF DELPHIXE3}
   , System.UITypes
 {$ENDIF}
@@ -148,6 +148,8 @@ begin
   end;
 
   AScript.AddClass(TcxMDLookupTreeComboBoxProperties, TcxMDLookupTreeComboBoxProperties.ClassParent.ClassName);
+
+  AScript.AddClass(TcxImageLookupComboBoxProperties, TcxImageLookupComboBoxProperties.ClassParent.ClassName);
 
   with AScript.AddClass(TcxLookupDBGridColumns, TcxLookupDBGridColumns.ClassParent.ClassName) do begin
     AddMethod('function ColumnByFieldName(const AFieldName: string): TcxLookupDBGridColumn', Call_TcxLookupDBGridColumns_Method);

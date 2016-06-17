@@ -80,12 +80,12 @@ inherited SBaseCustomEditFrm: TSBaseCustomEditFrm
           Visible = False
           OnClick = btnApplyClick
         end
-        object btnPrint: TcxButton
+        object btnActions: TcxButton
           Tag = -1
           AlignWithMargins = True
-          Left = 433
+          Left = 413
           Top = 0
-          Width = 75
+          Width = 95
           Height = 23
           Margins.Left = 5
           Margins.Top = 0
@@ -100,7 +100,7 @@ inherited SBaseCustomEditFrm: TSBaseCustomEditFrm
         end
         object ViewID: TcxTextEdit
           AlignWithMargins = True
-          Left = 358
+          Left = 338
           Top = 1
           Margins.Left = 0
           Margins.Top = 1
@@ -131,9 +131,6 @@ inherited SBaseCustomEditFrm: TSBaseCustomEditFrm
           Padding.Top = 3
           Padding.Bottom = 3
           ImageIndex = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           object pTsMain: TGroupPanel
             Left = 0
             Top = 3

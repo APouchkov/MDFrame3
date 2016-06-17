@@ -362,7 +362,7 @@ ENDIF}
     FIconIndex_Submit, FIconIndex_Select, FIconIndex_Take, FIconIndex_Backward, FIconIndex_Forward,
     FIconIndex_EditButtonCalc, FIconIndex_EditButtonDate,
 
-    FIconIndex_Wizard, FIconIndex_Printer, FIconIndex_Excel, FIconIndex_FastReport,
+    FIconIndex_Wizard, FIconIndex_Printer, FIconIndex_Actions, FIconIndex_Excel, FIconIndex_FastReport,
     FIconIndex_FileOpen, FIconIndex_FileSave,
     FIconIndex_Run, FIconIndex_Pause, FIconIndex_Step, FIconIndex_BreakPoint, FIconIndex_Watches,
     FIconIndex_GutterExecutable, FIconIndex_GutterCurrent, FIconIndex_GutterError, FIconIndex_GutterBreakPoint,
@@ -450,6 +450,7 @@ ENDIF}
     property IconIndex_FitToScreen: Integer read FIconIndex_FitToScreen write FIconIndex_FitToScreen;
     property IconIndex_Wizard: Integer read FIconIndex_Wizard write FIconIndex_Wizard;
     property IconIndex_Printer: Integer read FIconIndex_Printer write FIconIndex_Printer;
+    property IconIndex_Actions: Integer read FIconIndex_Actions write FIconIndex_Actions;
     property IconIndex_Excel: Integer read FIconIndex_Excel write FIconIndex_Excel;
     property IconIndex_FastReport: Integer read FIconIndex_FastReport write FIconIndex_FastReport;
     property IconIndex_Submit: Integer read FIconIndex_Submit write FIconIndex_Submit;

@@ -735,7 +735,7 @@ begin
             Item        := mnSelect;
             BeginGroup  := True;
             Visible     := True;
-            Align       := mnSelect.Align;
+            Align       := TdxBarItemAlign.iaCenter;
           end;
 
         if (SelectMode in [smSingleRepeateAble, smMultipleRepeateAble]) and not ToolBar.ItemLinks.HasItem(mnTake) then
@@ -750,6 +750,7 @@ begin
           with Add do begin
             Item        := mnFormClose;
             Visible     := True;
+            Align       := TdxBarItemAlign.iaCenter;
           end;
       end;
 
@@ -757,7 +758,10 @@ begin
         with Add do begin
           Item        := mnSubmit;
           Visible     := True;
+          Align       := mnSubmit.Align;
         end;
+
+      ToolBar.ItemLinks.FindByItem(mnSubmit).Index := ToolBar.ItemLinks.Count - 1;
     finally
       EndUpdate;
     end;

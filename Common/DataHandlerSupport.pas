@@ -578,7 +578,10 @@ var
   LSubDataHandler: TSubDataHandler absolute ADataHandler;
 begin
   LDataSet := ADataHandler.DataSet;
+{$IFDEF DEBUG}
   Assert((LDataSet <> nil));
+{$ENDIF}
+
   if LDataSet.Editing then
     LDataSet.Post;
 
@@ -587,8 +590,15 @@ begin
       if (not XMLPost.FieldName.IsEmpty) then begin
         LParentDataSet  := Parent.DataSet;
 {$IFDEF DEBUG}
-        Assert((LParentDataSet <> nil) and (not LParentDataSet.IsEmpty));
+        Assert(Assigned(LParentDataSet));
 {$ENDIF}
+        if LParentDataSet.IsEmpty then begin
+{$IFDEF DEBUG}
+          Assert(LDataSet.IsEmpty, 'LDataSet.IsEmpty');
+{$ENDIF}
+          Exit;
+        end;
+
         LField := LParentDataSet.FieldByName(XMLPost.FieldName);
 
         LXMLRows := '';

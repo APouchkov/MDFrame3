@@ -708,12 +708,13 @@ uses
 {$IFDEF DATAHANDLER}
   , DataHandler
 {$ENDIF}
-;
+, SBaseDxUtils;
 
 type
   TControlCrack = class(TControl);
   TcxContainerCrack = class(TcxContainer);
   TcxCustomEditCrack = class(TcxCustomEdit);
+  TcxBarEditItemCrack = class(TcxBarEditItem);
   TcxCustomGridViewCrack = class(TcxCustomGridView);
   TdxBarItemCrack = class(TdxBarItem);
 
@@ -1901,7 +1902,10 @@ begin
       TcxEditButtonClickEvent(FSavedMethod)(Sender, AButtonIndex);
     if Assigned(FOnOtherButtonClick) then
       FOnOtherButtonClick(Sender, AButtonIndex);
+//    Exit;
   end;
+
+  TcxCustomEditCrack(Sender).DoHideEdit(True);
 end;
 
 procedure TSBaseCustomLookupComponentControl.SetSelectMenu(const AValue: TdxBarPopupMenu);
@@ -2365,9 +2369,11 @@ begin
   if FControl <> nil then begin
     if (FControl is TcxCustomButtonEdit) then
       TcxCustomButtonEdit(FControl).Text := AValue
-    else if (FControl is TcxBarEditItem) then
-      TcxBarEditItem(FControl).EditValue := AValue
-    else if (FControl is TcxGridColumn) then begin
+    else if (FControl is TcxBarEditItem) then begin
+      TcxBarEditItem(FControl).SetEditAndDisplayValue(AValue);
+
+
+    end else if (FControl is TcxGridColumn) then begin
       if AUserAction then
         with TcxGridColumn(FControl) do begin
           //DataBinding.DataController.Edit;
@@ -2429,7 +2435,7 @@ begin
       try
         inherited;
       finally
-        FSkipExtractParamValues := True;
+        FSkipExtractParamValues := False;
       end;
     end;
 end;

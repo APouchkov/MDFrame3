@@ -30,6 +30,7 @@ type
     procedure Set_TCustomEdit_Property(Instance: TObject; ClassType: TClass; const PropName: String; Value: Variant);
 
     function  Call_TCustomImageList_Method(Instance: TObject; ClassType: TClass; const MethodName: String; Caller: TfsMethodHelper): Variant;
+    function Get_TCustomImageList_Property(Instance: TObject; ClassType: TClass; const PropName: String): Variant;
 
     function  Get_TPicture_Property(Instance: TObject; ClassType: TClass; const PropName: String): Variant;
     procedure Set_TPicture_Property(Instance: TObject; ClassType: TClass; const PropName: String; Value: Variant);
@@ -127,6 +128,7 @@ begin
 
   with AScript.AddClass(TCustomImageList, TCustomImageList.ClassParent.ClassName) do begin
     AddMethod('function GetBitmap(Index: Integer; Image: TBitmap): Boolean', Call_TCustomImageList_Method);
+    AddProperty('Count', 'DelphiTypeInteger', Get_TCustomImageList_Property);
   end;
 
   with AScript.AddClass(TPicture, TPicture.ClassParent.ClassName) do begin
@@ -221,10 +223,31 @@ begin
     Result := TCustomEdit(Instance).SelStart
 end;
 
+function TFunctions_WinCtlr.Get_TCustomImageList_Property(Instance: TObject;
+  ClassType: TClass; const PropName: String): Variant;
+begin
+{$IFDEF DEBUG}
+  FSCheckInstanceProperty(Instance, ClassType, PropName, TCustomImageList);
+{$ENDIF}
+  if PropName = 'COUNT' then
+    Result := Integer(TCustomImageList(Instance).Count)
+{$IFDEF DEBUG}
+  else
+    RaiseFSNoProperty(Instance, ClassType, PropName);
+{$ENDIF}
+end;
+
 procedure TFunctions_WinCtlr.Set_TCustomEdit_Property(Instance: TObject; ClassType: TClass; const PropName: String; Value: Variant);
 begin
+{$IFDEF DEBUG}
+  FSCheckInstanceProperty(Instance, ClassType, PropName, TCustomEdit);
+{$ENDIF}
   if PropName = 'SELSTART' then
     TCustomEdit(Instance).SelStart := Value
+{$IFDEF DEBUG}
+  else
+    RaiseFSNoProperty(Instance, ClassType, PropName);
+{$ENDIF}
 end;
 
 procedure TFunctions_WinCtlr.Set_TControl_Property(Instance: TObject; ClassType: TClass; const PropName: String; Value: Variant);

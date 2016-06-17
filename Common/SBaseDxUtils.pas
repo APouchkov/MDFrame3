@@ -12,7 +12,15 @@ type
     procedure CheckVisible;
   end;
 
+  TcxCustomBarEditItemHelper = class Helper for TcxCustomBarEditItem
+//    procedure HideAll(AReason: TdxBarCloseUpReason);
+    procedure SetEditAndDisplayValue(const Value: TcxEditValue);
+  end;
+
 implementation
+
+type
+  TcxBarEditItemControlCrack = class(TcxBarEditItemControl);
 
 { TdxBarSubItemHelper }
 
@@ -49,6 +57,31 @@ begin
     Visible := ivAlways
   else
     Visible := ivNever;
+end;
+
+{ TcxCustomBarEditItemHelper }
+
+//procedure TcxCustomBarEditItemHelper.HideAll(AReason: TdxBarCloseUpReason);
+//var
+//  LdxBarItemLink: TdxBarItemLink;
+//begin
+//  if Assigned(LdxBarItemLink) then begin
+//    if Assigned(LdxBarItemLink.Control) then
+//      TcxBarEditItemControlCrack(LdxBarItemLink.Control).hide;
+//  end;
+//end;
+
+procedure TcxCustomBarEditItemHelper.SetEditAndDisplayValue(const Value: TcxEditValue);
+var
+  LdxBarItemLink: TdxBarItemLink;
+begin
+  LdxBarItemLink := FocusedItemLink;
+  if Assigned(LdxBarItemLink) then begin
+    if Assigned(LdxBarItemLink.Control) then
+      TcxBarEditItemControlCrack(LdxBarItemLink.Control).Hide(False);
+  end;
+
+  EditValue := Value;
 end;
 
 end.

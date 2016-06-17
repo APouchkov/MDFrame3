@@ -65,7 +65,7 @@ type
     FText_MenuNew, FText_MenuNewLevel, FText_MenuNewSubLevel, FText_MenuNewElement, FText_MenuNewSubElement, FText_MenuCreate,
     FText_MenuDelete, FText_MenuUnDelete, FText_MenuDeleteAll, FText_MenuClear, FText_MenuCopy, FText_MenuCopyAll, FText_MenuCut, FText_MenuPaste,
     FText_SubMenuMask, FText_SubMenuFile, FText_SubMenuFolder, FText_MenuLoadFromFile, FText_MenuSaveToFile,
-    FText_MenuPost, FText_MenuApply,
+    FText_MenuPost, FText_MenuApply, FText_MenuActions,
     FText_MenuMarkAsDeleted, FText_MenuUnMarkFromDeleted,
     FText_MenuRefresh, FText_MenuRefreshRecord, FText_MenuSelect, FText_MenuTake, FText_MenuHighlightAll, FText_MenuDisplay, FText_MenuBackward, FText_MenuForward,
     FText_MenuFinish, FText_MenuHelp,
@@ -145,6 +145,7 @@ type
     property Text_MenuSaveToFile: String read FText_MenuSaveToFile write FText_MenuSaveToFile;
     property Text_MenuPost: String read FText_MenuPost write FText_MenuPost;
     property Text_MenuApply: String read FText_MenuApply write FText_MenuApply;
+    property Text_MenuActions: String read FText_MenuActions write FText_MenuActions;
     property Text_MenuMarkAsDeleted: String read FText_MenuMarkAsDeleted write FText_MenuMarkAsDeleted;
     property Text_MenuUnMarkFromDeleted: String read FText_MenuUnMarkFromDeleted write FText_MenuUnMarkFromDeleted;
     property Text_MenuRefresh: String read FText_MenuRefresh write FText_MenuRefresh;

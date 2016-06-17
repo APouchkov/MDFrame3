@@ -19,7 +19,7 @@ uses
 
   cxLookAndFeels, cxLookAndFeelPainters, dxSkinsCore, dxSkinsForm,
   dxSkinsDefaultPainters, dxSkinsdxStatusBarPainter, dxSkinscxPCPainter, dxSkinsdxBarPainter,
-  cxMDDBLookupComboBox, cxMDRadioGroup, SeparatorPanel
+  cxMDDBLookupComboBox, cxMDRadioGroup, cxImageLookupComboBox, SeparatorPanel
 
 //  , dxSkinBlack, dxSkinBlue, dxSkinCaramel, dxSkinCoffee
 //  , dxSkinDarkRoom, dxSkinDarkSide
@@ -1969,6 +1969,7 @@ initialization
       TcxLookupComboBoxProperties,
       TcxCheckLookupComboBoxProperties, TcxCheckLookupComboBox, TcxDBCheckLookupComboBox,
       TcxMDLookupTreeComboBoxProperties, TcxMDLookupTreeComboBox, TcxMDDBLookupTreeComboBox, TcxMDMultiFieldsDBLookupTreeComboBox, TcxDBCheckLookupComboBox,
+      TcxImageLookupComboBoxProperties,
       TcxTreeListColumnOptions,
       TcxMRUEditProperties,
       TcxImageList, TcxImageCollection, TcxImageCollectionItem, TcxNamedImageCollection, TcxNamedImageCollectionItem,
@@ -2025,6 +2026,7 @@ finalization
       TcxLookupComboBoxProperties,
       TcxCheckLookupComboBoxProperties, TcxCheckLookupComboBox, TcxDBCheckLookupComboBox,
       TcxMDLookupTreeComboBoxProperties, TcxMDLookupTreeComboBox, TcxMDDBLookupTreeComboBox, TcxMDMultiFieldsDBLookupTreeComboBox, TcxDBCheckLookupComboBox,
+      TcxImageLookupComboBoxProperties,
       TcxTreeListColumnOptions,
       TcxMRUEditProperties,
       TcxImageList, TcxImageCollection, TcxImageCollectionItem, TcxNamedImageCollection, TcxNamedImageCollectionItem,

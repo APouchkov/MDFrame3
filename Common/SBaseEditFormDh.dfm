@@ -12,6 +12,11 @@ inherited SBaseEditFrmDh: TSBaseEditFrmDh
       end
     end
   end
+  object DataSetMain: TSQLDataSetProvider [1]
+    Params = <>
+    Left = 131
+    Top = 106
+  end
   inherited BarManager: TdxMDBarManager
     Font.Charset = DEFAULT_CHARSET
     Categories.Strings = (
@@ -49,11 +54,6 @@ inherited SBaseEditFrmDh: TSBaseEditFrmDh
   object PropStorageDh: TdhItemPropStorage
     DefaultImages.Copy = 0
     Left = 55
-    Top = 106
-  end
-  object DataSetMain: TSQLDataSetProvider
-    Params = <>
-    Left = 131
     Top = 106
   end
 end

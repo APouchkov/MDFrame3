@@ -1093,8 +1093,16 @@ begin
     if Assigned(OnClick.SystemProcedure) then begin
       LDone := False;
       OnClick.SystemProcedure(Self, LVarCollection, LDone);
-      if LDone then
+      if LDone then begin
+        if OnClick.Reaction in
+            [
+              biraDataSourceInPlaceEdit, biraDataSourceInPlacePost, biraDataSourceInPlaceInsert, biraDataSourceInPlaceInsertData,
+              biraDataSourceInPlaceInsertChild, biraDataSourceInPlaceCopy
+            ]
+        then
+          FDataSourceControlProperties.InPlaceSyncEdit;
         Exit;
+      end;
     end;
 
     case OnClick.Reaction of

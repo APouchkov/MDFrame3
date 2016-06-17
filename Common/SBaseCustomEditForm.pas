@@ -29,7 +29,7 @@ type
 //  TCaptions = Array[TFormMode] of String;
 
 {$IFDEF REPORT_FROMEDIT}
-  TPrintProperties = class;
+  TActionsProperties = class;
 {$ENDIF}
 
 {$REGION 'TSBaseCustomEditFrm - Definition'}
@@ -42,7 +42,7 @@ type
     btnOk: TcxButton;
     btnCancel: TcxButton;
     btnApply: TcxButton;
-    btnPrint: TcxButton;
+    btnActions: TcxButton;
     ActionPgUp: TAction;
     ActionPgDown: TAction;
     PanelMain: TcxGroupBox;
@@ -62,7 +62,7 @@ type
     FFormMode: TFormMode;
     FCanClose : Boolean;
 {$IFDEF REPORT_FROMEDIT}
-    FPrintProperties: TPrintProperties;
+    FActionsProperties: TActionsProperties;
 {$ENDIF}
     FDefaultEditControl: TWinControl;
 
@@ -155,26 +155,26 @@ type
   { Режим сохранения "Без транзакции" / "Транзакция на сервере" / "Транзакция на клиенте" }
     property TransactionMode: TSQLTransactionMode read FTransactionMode write FTransactionMode default stmNone;
 {$IFDEF REPORT_FROMEDIT}
-    property PrintProperties: TPrintProperties read FPrintProperties;
+    property ActionsProperties: TActionsProperties read FActionsProperties;
 {$ENDIF}
 
     property DefaultEditControl: TWinControl read FDefaultEditControl write FDefaultEditControl;
   end;
 {$ENDREGION 'TSBaseCustomEditFrm - Definition'}
 
-{$REGION 'TPrintProperties - Definition'}
+{$REGION 'TActionsProperties - Definition'}
 {$IFDEF REPORT_FROMEDIT}
-  TPrintProperties = class(TPersistent)
+  TActionsProperties = class(TPersistent)
   strict private
-    FPrintMenu: TdxBarPopupMenu;
+    FActionsMenu: TdxBarPopupMenu;
     FSQLMenuController: TSBaseCustomSQLMenuController;
     [Weak] FOwner: TSBaseCustomEditFrm;
 
     function  GetSQL: TStrings;
     procedure SetSQL(AValue: TStrings);
 
-    procedure PrintButtonClick(Sender: TObject);
-    procedure PrintButtonDropDownMenuPopup(Sender: TObject; var APopupMenu: TComponent; var AHandled: Boolean);
+    procedure ActionsButtonClick(Sender: TObject);
+    procedure ActionsButtonDropDownMenuPopup(Sender: TObject; var APopupMenu: TComponent; var AHandled: Boolean);
 
 //    procedure DoChange;
   protected
@@ -188,7 +188,7 @@ type
     property SQL: TStrings read GetSQL write SetSQL;
   end;
 {$ENDIF}
-{$ENDREGION 'TPrintProperties - Definition'}
+{$ENDREGION 'TActionsProperties - Definition'}
 
 {$REGION 'FASTSCRIPT_RTTI - Definition'}
 {$IFDEF FASTSCRIPT_RTTI}
@@ -216,13 +216,15 @@ type
 {$REGION 'TSBaseCustomEditFrm'}
 procedure TSBaseCustomEditFrm.InternalCreate;
 begin
-  with btnPrint.OptionsImage do begin
+  btnActions.Caption := SBaseProperties.Text_MenuActions;
+
+  with btnActions.OptionsImage do begin
     Images      := SBaseFormProperties.Icon16List;
-    ImageIndex  := SBaseFormProperties.IconIndex_Printer;
+    ImageIndex  := SBaseFormProperties.IconIndex_Actions;
   end;
-  btnPrint.Caption := SBaseProperties.Text_MenuPrint;
+  btnActions.Caption := SBaseProperties.Text_MenuActions;
 {$IFDEF REPORT_FROMEDIT}
-  FPrintProperties := TPrintProperties.Create(Self);
+  FActionsProperties := TActionsProperties.Create(Self);
 {$ENDIF}
 
   //FReadOnly := False;
@@ -250,7 +252,7 @@ begin
   inherited;
 
   if FormMode in [fmView, fmEdit] then
-    FPrintProperties.Update;
+    FActionsProperties.Update;
 end;
 {$ENDIF}
 
@@ -292,7 +294,7 @@ end;
 {$IFDEF REPORT_FROMEDIT}
 destructor TSBaseCustomEditFrm.Destroy;
 begin
-  FreeAndNil(FPrintProperties);
+  FreeAndNil(FActionsProperties);
 
   inherited;
 end;
@@ -535,62 +537,62 @@ end;
 {$IFDEF REPORT_FROMEDIT}
 { TPrintProperties }
 
-constructor TPrintProperties.Create(AOwner: TSBaseCustomEditFrm);
+constructor TActionsProperties.Create(AOwner: TSBaseCustomEditFrm);
 begin
   Assert(Assigned(AOwner));
   FOwner := AOwner;
 
-  FPrintMenu := TdxBarPopupMenu.Create(AOwner.BarManager);
-  FPrintMenu.BarManager := AOwner.BarManager;
-  AOwner.btnPrint.DropDownMenu := FPrintMenu;
+  FActionsMenu := TdxBarPopupMenu.Create(AOwner.BarManager);
+  FActionsMenu.BarManager := AOwner.BarManager;
+  AOwner.btnActions.DropDownMenu := FActionsMenu;
 
   FSQLMenuController := TSBaseCustomSQLMenuController.CustomCreate(AOwner);
-  FSQLMenuController.MenuComponent := FPrintMenu;
+  FSQLMenuController.MenuComponent := FActionsMenu;
 
-  AOwner.btnPrint.OnClick := PrintButtonClick;
-  AOwner.btnPrint.OnDropDownMenuPopup := PrintButtonDropDownMenuPopup;
+  AOwner.btnActions.OnClick := ActionsButtonClick;
+  AOwner.btnActions.OnDropDownMenuPopup := ActionsButtonDropDownMenuPopup;
 
   inherited Create;
 end;
 
-destructor TPrintProperties.Destroy;
+destructor TActionsProperties.Destroy;
 begin
-  FOwner.btnPrint.OnClick := nil;
-  FOwner.btnPrint.OnDropDownMenuPopup := nil;
+  FOwner.btnActions.OnClick := nil;
+  FOwner.btnActions.OnDropDownMenuPopup := nil;
 
   FreeAndNil(FSQLMenuController);
 
   inherited;
 end;
 
-procedure TPrintProperties.AssignTo(ADest: TPersistent);
+procedure TActionsProperties.AssignTo(ADest: TPersistent);
 begin
-  TPrintProperties(ADest).SQL := SQL;
+  TActionsProperties(ADest).SQL := SQL;
 end;
 
-function TPrintProperties.GetSQL: TStrings;
+function TActionsProperties.GetSQL: TStrings;
 begin
   Result := FSQLMenuController.SQL
 end;
 
-procedure TPrintProperties.SetSQL(AValue: TStrings);
+procedure TActionsProperties.SetSQL(AValue: TStrings);
 begin
   FSQLMenuController.SQL := AValue;
 end;
 
-procedure TPrintProperties.PrintButtonClick(Sender: TObject);
+procedure TActionsProperties.ActionsButtonClick(Sender: TObject);
 begin
-  if FOwner.CheckApplied and FOwner.btnPrint.Visible then begin
+  if FOwner.CheckApplied and FOwner.btnActions.Visible then begin
     if (FSQLMenuController.DefaultItem <> nil) then
       FSQLMenuController.DefaultItem.Click
-    else if (FOwner.btnPrint.Kind = cxbkDropDown) then
-      TcxButtonCrack(FOwner.btnPrint).DoDropDownMenu
+    else if (FOwner.btnActions.Kind = cxbkOfficeDropDown) then
+      TcxButtonCrack(FOwner.btnActions).DoDropDownMenu
   end;
 end;
 
-procedure TPrintProperties.PrintButtonDropDownMenuPopup(Sender: TObject; var APopupMenu: TComponent; var AHandled: Boolean);
+procedure TActionsProperties.ActionsButtonDropDownMenuPopup(Sender: TObject; var APopupMenu: TComponent; var AHandled: Boolean);
 begin
-  if FOwner.CheckApplied and FOwner.btnPrint.Visible then begin
+  if FOwner.CheckApplied and FOwner.btnActions.Visible then begin
     if FSQLMenuController.ClickableCount = 1 then begin
       FSQLMenuController.DefaultItem.Click;
       AHandled := True;
@@ -599,31 +601,31 @@ begin
     AHandled := True;
 end;
 
-procedure TPrintProperties.Update;
+procedure TActionsProperties.Update;
 var
-  LPrintButton: TcxButton;
+  LActionButton: TcxButton;
 begin
-  LPrintButton := FOwner.btnPrint;
+  LActionButton := FOwner.btnActions;
 
   FSQLMenuController.UnConfigure;
   if SQL.Count = 0 then begin
-    LPrintButton.Visible := False;
-    LPrintButton.Enabled := False;
+    LActionButton.Visible := False;
+    LActionButton.Enabled := False;
     Exit;
   end;
 
   FSQLMenuController.Configure;
   if (not FSQLMenuController.Root.Enabled) then begin
-    LPrintButton.Visible := False;
-    LPrintButton.Enabled := False;
+    LActionButton.Visible := False;
+    LActionButton.Enabled := False;
   end else begin
     if (FSQLMenuController.ClickableCount > 1) and (FSQLMenuController.DefaultItem <> nil) then
-      LPrintButton.Kind := cxbkDropDownButton
+      LActionButton.Kind := cxbkDropDownButton
     else
-      LPrintButton.Kind := cxbkDropDown;
+      LActionButton.Kind := cxbkOfficeDropDown;
 
-    LPrintButton.Enabled := True;
-    LPrintButton.Visible := True;
+    LActionButton.Enabled := True;
+    LActionButton.Visible := True;
   end;
 end;
 {$ENDIF}
