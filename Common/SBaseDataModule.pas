@@ -364,7 +364,9 @@ type
     function GetActiveDataSet: TDataSet; inline;
     function GetBaseDataSetProviderSupport: IBaseDataSetProvider;
 
+{$IFNDEF PACKAGE}
     function GetDataSources: TList<TDataSource>; override;
+{$ENDIF}
   public
   { Унаследованные публичные методы базового класса TDataSet }
     constructor Create(AOwner: TComponent); override;
@@ -1398,6 +1400,7 @@ type
   TFieldHelper = class Helper for TField
     function Clone(AOwner: TComponent = nil): TField;
     function IsOrdinal: Boolean;
+    function IsNullOrWhiteSpace: Boolean;
   end;
 
   TParamHelper = class Helper for TParam
@@ -1477,17 +1480,8 @@ const
   SConst_MainDataSet    : String = 'MainDataSet';
   SConst_ReservedDataSet: String = 'ReservedDataSet';
 
-type
-//  TReplaceDataSetDataSource = record
-//    DataSource: TDataSource;
-//    Enabled   : Boolean;
-//  end;
-//  TReplaceDataSetField = record
-//    Address   : Pointer;
-//    FieldName : String;
-//  end;
-
 {$IFDEF SERVICEBROKER_SUPPORT}
+type
   TCustomSQLServiceBrokerProviderCrack = class(TCustomSQLServiceBrokerProvider);
 {$ENDIF}
 
@@ -2355,14 +2349,18 @@ begin
       if (FieldKind = fkData) and CanModify and (not InArray(AExcludedFields, FieldName, ';')) then begin
         if AVariables.Find(FieldName, LIdx) then begin
           if (ALoadValueCondition <> lvcIfNotPresent) or (IsNull) then
+{$IFNDEF PACKAGE}
 {$IFDEF DEBUG}
           try
 {$ENDIF}
+{$ENDIF}
             AsVariant := AVariables.Items[LIdx].Value;
+{$IFNDEF PACKAGE}
 {$IFDEF DEBUG}
           except on E:Exception do begin
             Raise Exception.Create(DataSet.Source.GetDisplayName + ':' + FieldName + ': ' + E.Message);
           end end;
+{$ENDIF}
 {$ENDIF}
         end else if ALoadValueCondition = lvcAlways then
           Clear;
@@ -2569,6 +2567,14 @@ begin
       TFMTBCDField(Result).Precision := Precision;
       TFMTBCDField(Result).Size := Size;
     end
+end;
+
+function TFieldHelper.IsNullOrWhiteSpace: Boolean;
+begin
+  if IsNull then Exit(True);
+  if DataType in [ftString, ftWideString, ftMemo, ftWideMemo] then
+    Exit(String.IsNullOrWhiteSpace(AsString));
+  Result := False;
 end;
 
 function TFieldHelper.IsOrdinal: Boolean;
@@ -4705,8 +4711,10 @@ begin
   CheckDataSet('GetDetailDataSets').GetDetailDataSets(List);
 end;
 {$ENDIF}
+
 {$IFNDEF NEXTGEN}
 {$WARN SYMBOL_DEPRECATED OFF}
+{$IFNDEF PACKAGE}
 function TCustomBaseDataSetProvider.GetDataSources: TList<TDataSource>;
 var
   LDataSet: TDataSet;
@@ -4717,6 +4725,7 @@ begin
   else
     Result := FDataSources
 end;
+{$ENDIF}
 
 procedure TCustomBaseDataSetProvider.GetDetailDataSets(AList: TList);
 begin

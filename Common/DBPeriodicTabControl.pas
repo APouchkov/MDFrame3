@@ -429,7 +429,7 @@ procedure Register;
 implementation
 
 {$IFNDEF PACKAGE}
-uses Forms, SBaseConstants, SBaseDataHelperInternal, SBaseUtils;
+uses Forms, SBaseConstants, SBaseDataHelperInternal, SBaseUtils, Math;
 
 type
   TSubDataHandlerXMLPostPropertiesCrack = class(TSubDataHandlerXMLPostProperties);
@@ -522,7 +522,7 @@ begin
       if VarIsPresent(LActiveDate) then begin
         LTabIndex := FOwner.FDateList.IndexOf(VarToDateTime(LActiveDate));
         if LTabIndex = -1 then
-          LTabIndex := LActiveTabIndex;
+          LTabIndex := Min(LActiveTabIndex, Pred(FOwner.DatesCount));
       end else
         LTabIndex := -1;
 

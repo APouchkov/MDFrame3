@@ -103,7 +103,7 @@ begin
   with ADataHandler.DataSet, ADataHandler.RequiredFields do
     for I := 0 to Count - 1 do begin
       with FieldByName(Items[I].FieldName) do
-        if IsNull and (FieldKind = fkData) and (not ReadOnly) then with Items[I] do begin
+        if (FieldKind = fkData) and (not ReadOnly) and IsNullOrWhiteSpace then with Items[I] do begin
           DoShowMessage(SBaseProperties.Message_ThisFieldMustHaveAValue, mWarn, TControlRect.GetControl(Control, SubControlIndex));
           Break;
         end;

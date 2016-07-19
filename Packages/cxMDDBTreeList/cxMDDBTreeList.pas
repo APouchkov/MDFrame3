@@ -421,7 +421,7 @@ end;
 
 function TcxMDDBTreeList.IsRootValueStored: Boolean;
 begin
-  Result := VarIsEqual(RootValue, Integer(-1));
+  Result := not VarIsEqual(RootValue, Integer(-1));
 end;
 
 function TcxMDDBTreeList.DoCanNodeCollapse(ANode: TcxTreeListNode): Boolean;

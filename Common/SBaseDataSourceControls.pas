@@ -166,6 +166,7 @@ type
   protected
     FProperties: TDataSourceControlProperties;
 
+    function  GetDisplayName: String; override;
     procedure SetGrid(const AValue: TComponent); overload;
   public
     constructor Create(Collection: TCollection); override;
@@ -535,6 +536,18 @@ begin
   inherited;
   FreeAndNil(FProperties);
   FreeAndNil(FLoadedLinks);
+end;
+
+function TDataSourceControlItem.GetDisplayName: String;
+var
+  LItem: TComponent;
+begin
+  LItem := GetGrid;
+  if Assigned(LItem) then begin
+    Result := LItem.Name;
+    if not Result.IsEmpty then Exit;
+  end;
+  Result := inherited GetDisplayName;
 end;
 
 function TDataSourceControlItem.GetGrid: TComponent;

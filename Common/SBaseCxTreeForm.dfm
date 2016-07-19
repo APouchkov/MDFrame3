@@ -1,8 +1,6 @@
 inherited SBaseCxTreeFrm: TSBaseCxTreeFrm
   Left = 194
   Top = 75
-  ExplicitWidth = 320
-  ExplicitHeight = 240
   PixelsPerInch = 96
   TextHeight = 13
   inherited PanelMain: TcxGroupBox
@@ -15,12 +13,10 @@ inherited SBaseCxTreeFrm: TSBaseCxTreeFrm
           Height = 394
           OnNodeAssignValues = cxDBTreeListNodeAssignValues
           Align = alClient
-          Bands = <>
           DataController.DataSource = DataSource
           Navigator.Buttons.CustomButtons = <>
           ParentFont = True
           PopupMenu = PopupMenu
-          RootValue = -1
           TabOrder = 0
           OnCollapsing = cxDBTreeListCollapsing
           OnDataChanged = DBGridDataChanged

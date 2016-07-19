@@ -15,7 +15,7 @@ uses
   cxEdit, cxCustomData, cxStyles, cxTL, cxTLdxBarBuiltInMenu, DB, SBaseDataModule,
   ImgList, ExtCtrls, dxBar, cxClasses, cxSplitter, cxInplaceContainer, cxTLData,
   cxDBTL, cxGroupBox, dxStatusBar, System.Actions, ActnList, dxMDBarButton,
-  cxMDDBTreeList, dxMDStatusBar;
+  cxMDDBTreeList, dxMDStatusBar, dxSkinsCore, dxSkinsDefaultPainters, dxMDBar;
 
 type
   TOnGetNodeColumnListEvent = procedure(ANode: TcxTreeListNode; var AColumns: TList) of Object;
@@ -113,9 +113,11 @@ begin
       LLastColumnIndex := LList.Count - 1;
       for I := 0 to LLastColumnIndex do begin
         LColumn := TcxDBTreeListColumn(LList[I]);
-        LBoundRight := LBoundLeft + LColumn.Width + IConst_GridLine_Size - 1;
+        LBoundRight := LBoundLeft + LColumn.Width;
         if (I = 0) then
-          LBoundRight := LBoundRight - LIndentWidth;
+          Dec(LBoundRight, LIndentWidth)
+        else
+          Inc(LBoundRight, IConst_GridLine_Size);
         if (LBoundRight > LRect.Right) or ((I = LLastColumnIndex) and (LBoundRight < LRect.Right)) then
           LBoundRight := LRect.Right;
         DrawCustomCell(LBoundLeft, LBoundRight, LColumn);

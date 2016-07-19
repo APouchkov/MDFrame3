@@ -609,7 +609,7 @@ ENDIF}
 {$ENDIF}
   strict private
     FGetBusy, FGetCaptionParamByName, FInternalGetParameters: TfsProcVariable;
-    FVirtualClassInfo: TSBaseVirtualClassInfo;
+    [Weak] FVirtualClassInfo: TSBaseVirtualClassInfo;
 
     procedure DoPrepare;
     type
@@ -1395,13 +1395,6 @@ var
 //  I, L: Integer;
   LClassInfo: TSBaseVirtualClassInfo;
 begin
-//  L := Length(SBaseVirtualClasses);
-//  I := 0;
-//  while (I < L) and (not SameText(AClassName, SBaseVirtualClasses[I].ClassName)) do
-//    Inc(I);
-//  if I = L then begin
-//    SetLength(SBaseVirtualClasses, Succ(L));
-
   if not SBaseVirtualClasses.TryGetValue(AClassName, LClassInfo) then begin
     LClassInfo := TSBaseVirtualClassInfo.Create(AClassName, APrivileges);
     SBaseVirtualClasses.Add(AClassName, LClassInfo);
@@ -1422,16 +1415,6 @@ begin
 {$IFDEF DEBUG}
   try
 {$ENDIF}
-(*
-  L := Length(SBaseVirtualClasses);
-  I := 0;
-  while (I < L) and (not SameText(AClassName, SBaseVirtualClasses[I].ClassName)) do
-    Inc(I);
-
-  if I = L then
-    Result := @SBaseRealClassInfo
-  else
-*)
   if not SBaseVirtualClasses.TryGetValue(AClassName, Result) then
     if ANotFoundAction = vcinfReturnEmpty then
       Exit(TSBaseVirtualClassInfo.Create(AClassName, Privilege_Preview_Bit))
