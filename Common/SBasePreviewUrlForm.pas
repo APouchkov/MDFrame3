@@ -1,4 +1,4 @@
-unit SBasePreviewTxtForm;
+unit SBasePreviewUrlForm;
 
 interface
 
@@ -7,11 +7,11 @@ uses
   Controls, Forms, Dialogs, SBaseForm, System.Actions, ActnList,
   dxBar, cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters,
   cxContainer, cxEdit, cxTextEdit, cxMemo, cxClasses, dxSkinsCore,
-  dxSkinsDefaultPainters, dxMDBar;
+  dxSkinsDefaultPainters, dxMDBar, Vcl.OleCtrls, SHDocVw;
 
 type
-  TSBasePreviewTxtFrm = class(TSBaseFrm)
-    Memo: TcxMemo;
+  TSBasePreviewUrlFrm = class(TSBaseFrm)
+    WebBrowser: TWebBrowser;
   private
     { Private declarations }
   public
@@ -25,25 +25,23 @@ implementation
 
 uses SBaseConstants, SBaseVariantFunctions;
 
-{ TSBasePreviewTxtFrm }
+{ TSBasePreviewUrlForm }
 
-procedure TSBasePreviewTxtFrm.InternalInit;
+procedure TSBasePreviewUrlFrm.InternalInit;
 var
   LIdx: Integer;
-  LStream: TStream;
 begin
   inherited;
 
-  if CreateFormParams.Find(SConst_Stream, LIdx) then begin
-    LStream := VarToPointer(CreateFormParams.Items[LIdx].Value);
-    Memo.Lines.LoadFromStream(LStream);
+  if CreateFormParams.Find(SConst_Url, LIdx) then begin
+    WebBrowser.Navigate(VarToStr(CreateFormParams.Items[LIdx].Value));
   end;
 end;
 
 initialization
-  RegisterClass(TSBasePreviewTxtFrm);
+  RegisterClass(TSBasePreviewUrlFrm);
 
 finalization
-  UnRegisterClass(TSBasePreviewTxtFrm);
+  UnRegisterClass(TSBasePreviewUrlFrm);
 
 end.

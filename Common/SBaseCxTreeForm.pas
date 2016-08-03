@@ -336,7 +336,7 @@ end;
 procedure TSBaseCxTreeFrm.ShowRecordCount;
 begin
   with StatusBar.Panels[Pred(StatusBar.Panels.Count)] do begin
-    Text := RecourdCountPrefix + IntToStr(cxDBTreeList.Count) + ' / ' + IntToStr(cxDBTreeList.AbsoluteCount);
+    Text := RecordCountPrefix + IntToStr(cxDBTreeList.Count) + ' / ' + IntToStr(cxDBTreeList.AbsoluteCount);
     Width := PanelStyle.StatusBarControl.Canvas.TextWidth(Text) + 10;
   end;
 end;

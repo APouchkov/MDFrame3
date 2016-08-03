@@ -49,8 +49,6 @@ inherited SBasePreviewTxtFrm: TSBasePreviewTxtFrm
     181805050E0E0E0B15152B2B2B2B2B2B2B2B2B2B2B2B2B2B2B2B2B2B2B2BFFFF
     0000C0030000C0030000C0030000C0030000C0030000C0030000C0030000C003
     0000C0030000C0030000C0030000C0030000C0070000C00F0000FFFF0000}
-  ExplicitLeft = 194
-  ExplicitTop = 66
   ExplicitWidth = 851
   ExplicitHeight = 613
   PixelsPerInch = 96
@@ -63,12 +61,10 @@ inherited SBasePreviewTxtFrm: TSBasePreviewTxtFrm
       'Memo')
     Properties.ScrollBars = ssBoth
     TabOrder = 4
-    ExplicitLeft = 152
-    ExplicitTop = 64
     Height = 575
     Width = 835
   end
-  inherited BarManager: TdxBarManager
+  inherited BarManager: TdxMDBarManager
     DockControlHeights = (
       0
       0

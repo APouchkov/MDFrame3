@@ -131,7 +131,7 @@ type
     FFilterUnderConstruction  : Boolean;
     FCollisions               : Boolean;
 
-    FRecourdCountPrefix          : String;
+    FRecordCountPrefix          : String;
     FExportToExcelInNativeFormat : Boolean;
 
     FThreadOpen               : Boolean;
@@ -250,7 +250,7 @@ type
     property RecordsPrivileges: Word read FRecordsPrivileges write SetRecordsPrivileges default 0;
 
     { Прификс для вывода кол-ва записей }
-    property RecourdCountPrefix: String read FRecourdCountPrefix write FRecourdCountPrefix;
+    property RecordCountPrefix: String read FRecordCountPrefix write FRecordCountPrefix;
     { Использует "родной" для Excel формат данных }
     property ExportToExcelInNativeFormat: Boolean read FExportToExcelInNativeFormat write FExportToExcelInNativeFormat Default True;
 
@@ -579,7 +579,7 @@ begin
   FCollisions               := True;
   FFilterUnderConstruction  := True;
 //  FRefreshTimeout         := 0;
-  FRecourdCountPrefix     := ' ' + SBaseProperties.Text_RecordCount + ': ';
+  FRecordCountPrefix     := ' ' + SBaseProperties.Text_RecordCount + ': ';
 
 //  FRecordsPrivileges      := 0;
 
@@ -1082,7 +1082,7 @@ end;
 procedure TSBaseXXViewFrm.ShowRecordCount;
 begin
   with StatusBar.Panels[Pred(StatusBar.Panels.Count)] do begin
-    Text := RecourdCountPrefix + IntToStr(InternalGetGridRecordCount);
+    Text := RecordCountPrefix + IntToStr(InternalGetGridRecordCount);
     Width := PanelStyle.StatusBarControl.Canvas.TextWidth(Text) + 10;
   end;
 end;
@@ -1343,7 +1343,7 @@ procedure TSBaseXXViewFrm.FormShow(Sender: TObject);
 begin
   inherited;
 
-//  StatusBar.Panels[1].Width := StatusBar.Canvas.TextWidth(FRecourdCountPrefix + '0000000');
+//  StatusBar.Panels[1].Width := StatusBar.Canvas.TextWidth(FRecordCountPrefix + '0000000');
   mnFilter.OnClick(mnFilter);
 end;
 

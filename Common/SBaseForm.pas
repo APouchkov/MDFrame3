@@ -701,9 +701,17 @@ ENDIF}
     procedure SetStoreFormSettings(const Value: TFormItemsForSave);
     function  GetVariables: TNamedVariants;
     procedure SetSQLConnectionProvider(const AValue: TSQLConnectionProvider);
+{$IFDEF DEBUG}
+    function GetDebugCreateFormParams: TStrings;
+    function GetDebugInternalFormParams: TStrings;
+    function GetDebugInternalFormConstants: TStrings;
+{$ENDIF}
   protected
 {$IFDEF DEBUG}
     FDebugInfo: TStrings;
+    FDebugCreateFormParams: TStrings;
+    FDebugInternalFormConstants: TStrings;
+    FDebugInternalFormParams: TStrings;
 {$IFDEF DEBUG_FORMS}
     FScriptDebugMode: Boolean;
 {$ENDIF}
@@ -1022,7 +1030,11 @@ ENDIF}
     { Эмулирует нажитие на контрол }
     property ClickItem: TComponent write SetClickItem;
 {$IFDEF DEBUG}
+    property DebugClassName: String read FInternalClassName;
     property DebugInfo: TStrings read FDebugInfo;
+    property DebugCreateFormParams: TStrings read GetDebugCreateFormParams;
+    property DebugInternalFormConstants: TStrings read GetDebugInternalFormConstants;
+    property DebugInternalFormParams: TStrings read GetDebugInternalFormParams;
 {$ENDIF}
   end;
 
@@ -2601,6 +2613,9 @@ begin
     FreeAndNil(FLinkedFilterItems);
     FreeAndNil(FClickItems);
 {$IFDEF DEBUG}
+    FreeAndNil(FDebugCreateFormParams);
+    FreeAndNil(FDebugInternalFormConstants);
+    FreeAndNil(FDebugInternalFormParams);
     FreeAndNil(FDebugInfo);
 {$ENDIF}
     FreeAndNil(FScript);
@@ -2656,6 +2671,41 @@ begin
 
   Result.ModifyState  := mdstNotSpecified;
 end;
+
+{$IFDEF DEBUG}
+function TSBaseFrm.GetDebugCreateFormParams: TStrings;
+begin
+  if not Assigned(FDebugCreateFormParams) then begin
+    FDebugCreateFormParams := TStringList.Create;
+    TStringList(FDebugCreateFormParams).Delimiter := ';';
+  end else
+    FDebugCreateFormParams.Clear;
+  FDebugCreateFormParams.Text := FCreateFormParams.AsClrTParams;
+  Result := FDebugCreateFormParams;
+end;
+
+function TSBaseFrm.GetDebugInternalFormConstants: TStrings;
+begin
+  if not Assigned(FDebugInternalFormConstants) then begin
+    FDebugInternalFormConstants := TStringList.Create;
+    TStringList(FDebugInternalFormConstants).Delimiter := ';';
+  end else
+    FDebugInternalFormConstants.Clear;
+  FDebugInternalFormConstants.Text := FInternalFormConstants.AsClrTParams;
+  Result := FDebugInternalFormConstants;
+end;
+
+function TSBaseFrm.GetDebugInternalFormParams: TStrings;
+begin
+  if not Assigned(FDebugInternalFormParams) then begin
+    FDebugInternalFormParams := TStringList.Create;
+    TStringList(FDebugInternalFormParams).Delimiter := ';';
+  end else
+    FDebugInternalFormParams.Clear;
+  FDebugInternalFormParams.Text := FInternalFormParams.AsClrTParams;
+  Result := FDebugInternalFormParams;
+end;
+{$ENDIF}
 
 procedure TSBaseFrm.WMConfigChanged(var Msg: TMessage);
 begin

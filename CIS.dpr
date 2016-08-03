@@ -115,7 +115,8 @@ uses
   SBaseXml in 'Common\SBaseXml.pas',
   SBaseCustomEditForm in 'Common\SBaseCustomEditForm.pas' {SBaseCustomEditFrm},
   SBaseEditForm in 'Common\SBaseEditForm.pas' {SBaseEditFrm},
-  cxEditedFieldCheckBox in 'Packages\cxEditedFieldCheckBox\cxEditedFieldCheckBox.pas';
+  cxEditedFieldCheckBox in 'Packages\cxEditedFieldCheckBox\cxEditedFieldCheckBox.pas',
+  SBasePreviewUrlForm in 'Common\SBasePreviewUrlForm.pas' {SBasePreviewUrlForm};
 
 {$R *.RES}
 

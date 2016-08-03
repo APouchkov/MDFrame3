@@ -110,6 +110,7 @@ begin
   fObjectInspector.Parent := Self;
   fObjectInspector.Align := alClient;
   fObjectInspector.OptionsView.RowHeaderWidth := 160;
+  fObjectInspector.OptionsView.ShowReadOnlyProperties := True;
   fObjectInspector.OnFilterProperty := DoObjectInspectorFilterProperty;
 
   DataSet.Clear;

@@ -90,6 +90,7 @@ const
   SConst_Subject            : String = 'Subject';
   SConst_Action             : String = 'Action';
   SConst_Unique             : String = 'Unique';
+  SConst_Url                : String = 'URL';
   SConst_Text               : String = 'Text';
   SConst_Number             : String = 'Number';
   SConst_Numeration         : String = 'Numeration';
